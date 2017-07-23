@@ -56,13 +56,15 @@ var tradeData = {"features":[{"country":"United States","latitude":37.0902,"long
 // ================================================== //
 
 $.getJSON(myGeoJSONPath,function(data){
+    var displayParameter = 'percent_of_trade_high';
+
     L.geoJson(data, {
         clickable: false,
         style: myCustomStyle
     }).addTo(map);
 
-    circles = addCircles(map, tradeData.features, 'trade_value_low');
-    initChart(map, tradeData.features, 'trade_value_low');
+    circles = addCircles(map, tradeData.features, displayParameter);
+    initChart(map, tradeData.features, displayParameter);
 });
 
 
@@ -76,37 +78,50 @@ function addCircles(map, data, displayParameter) {
     for (var i = 0; i < data.length; i++) {
         var d = data[i];
         var circle = L.circle([d.latitude, d.longitude], {
-            radius: d[displayParameter] * 1000,
+            radius: d[displayParameter] * 10000,
             // radius: 500000,
             className: 'overlay-circle'
         }).addTo(map);
-        console.log(circle)
         // circleArray.push(circle);
     };
     return circleArray;
 }
 
 function initChart(map, data, displayParameter) {
+    // Sort the data in descending order
+    data.sort(function(a, b){
+        return b[displayParameter] - a[displayParameter];
+    });
+
+    var width = 300;
+
+    // var x = d3.scaleLinear()
+    //     .domain([0, d3.max(data.features)])
+    //     .range([0, width]);
+
     svgChart = d3.select('#sm-chart')
         .append('svg')
             .attr('width', 400)
             .attr('height', 300);
 
-    svgChart.selectAll('rect')
-        .data(ratData)
-        .enter()
-        .append('rect')
-            .attr('y', function(d, i) {
-                return i * (barWidth + barSpacing);
-            })
-            .attr('height', barWidth)
-            .attr('fill', '#3E77B9')
-            .attr('width', function(d) {
-                return calcBarLength(d); // length of each bar
-            })
-            .attr('x', function(d){
-                return 50; // left margin
-            });
+    var bar = svgChart.selectAll("g")
+        .data(tradeData.features)
+        .enter().append("g")
+        .attr("transform", function(d, i) {
+            return "translate(20," + i * barWidth + ")";
+        });
+
+    bar.append("rect")
+        .attr("width", function(d) {
+            return calcBarLength(d[displayParameter]); // length of each bar
+        })
+        .attr("height", barWidth - 1);
+
+    bar.append("text")
+        .attr("x", 5)
+        .attr("y", barWidth / 2)
+        .attr("dy", ".35em")
+        .text(function(d) { return Math.round(d[displayParameter]); });
 }
 
 // ================================================== //
@@ -114,14 +129,13 @@ function initChart(map, data, displayParameter) {
 // ================================================== //
 
 function calcBarLength(d) {
-    return d/10 * 2;
+    return d/10 * 20;
 }
 
 
 // NEXT
-// Figure out how to loop through country data
-// and create bars from each data point in D3.
-// D3 ".data" - Make a subset of desired data points?
+// Scale the chart to fit within the bounds of sidebar
+// Alter calcBarLength with d3.scale.linear()
 
 
 

@@ -31,6 +31,7 @@ h2 {
 }
 
 h3 {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
 }
 
@@ -132,8 +133,23 @@ a:hover {
     font-weight: bold;
 }
 
+
+/* ================================================== */
+/* Chart styles
+/* ================================================== */
+
 #sm-chart {
     width: 100%;
+}
+
+#sm-chart rect {
+    fill: #3E77B9;
+}
+
+#sm-chart text {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    fill: #fff;
+    font-size: 12px;
 }
 
 
@@ -156,12 +172,12 @@ path.leaflet-interactive {
 }
 
 path.overlay-circle {
-    stroke: red;
+    stroke: #3E77B9;
     stroke-width: 3;
-    fill: red;
+    fill: #3E77B9;
     fill-opacity: 0.5;
 }
 
 .leaflet-container {
-    background: lightblue !important;
+    background: #f0f0f0 !important;
 }
