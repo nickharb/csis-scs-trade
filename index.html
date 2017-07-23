@@ -5,13 +5,38 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" integrity="sha512-wcw6ts8Anuw10Mzh9Ytw4pylW8+NAD4ch3lqm9lzAsTxg0GFeJgoAtxuCLREZSC5lUXdVyo/7yfsqFjQ4S+aKw==" crossorigin=""/>
     <link href="css/styles.css" rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href="http://favicon.cargocollective.com/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Slab:400,700" rel="stylesheet">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
 </head>
 <body>
-    <div id="container">
-        <h1>Putting a Price on the Strait of Malacca</h1>
-        <div id="map"></div>
+    <div id="sm-interactive">
+        <div class="sm-main-header">
+            <div class="sm-main-title">
+                <h1>Putting a Price on the Strait of Malacca</h1>
+            </div>
+            <div class="sm-main-nav">
+                <ul class="sm-main-nav-tabs">
+                    <li><a href="#tab-1">South China Sea</a></li>
+                    <li><a href="#tab-2">Total SCS Trade</a></li>
+                    <li><a href="#tab-3">Regional Stakeholders</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sm-sidebar-container">
+            <div class="sm-sidebar">
+                <h2>Global Exports Through the South China Sea</h2>
+                <div class="sm-subnav">Year: 2016</div>
+                <h3 class="sm-display-figure"><span class="sm-dollar-sign">$</span><span id="sm-display-number">3.4-4.2</span> trillion</h3>
+            </div>
+            <div class="sm-sidebar">
+                <!-- <h2>South China Sea Trade as a percentage of all maritime trade</h2>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad.</p> -->
+                <div id="sm-chart"></div>
+            </div>
+        </div>
+        
+        <div id="sm-map"></div>
     </div>
 
     <script src="js/vendor/jquery-3.2.1.min.js"></script>

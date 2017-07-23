@@ -3,6 +3,14 @@ html, body {
     height: 100%;
 }
 
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -14,24 +22,131 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #263D45;
 }
 
-#container {
+h2 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+p {
+    font-size: 14px;
+    color: #000;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: #3E77B9;
+}
+
+a:hover {
+    color: #EA3B33;
+}
+
+/* ================================================== */
+/* Interactive styles
+/* ================================================== */
+
+#sm-interactive {
     width: 100%;
-    height: 600px;
+    height: 700px;
     background: #f0f0f0;
 }
 
-#map {
+
+/* ================================================== */
+/* Header
+/* ================================================== */
+
+.sm-main-header {
+    /*position: absolute;
+    z-index: 900;*/
+    height: 60px;
+    padding: 0 20px;
+}
+
+.sm-main-title {
+    float: left;
+}
+
+.sm-main-title h1 {
+    color: #333;
+    font-size: 18px;
+    margin: 20px 0;
+    line-height: 1em;
+}
+
+.sm-main-title span {
+    /*font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.01em;*/
+}
+
+.sm-main-nav {
+    margin: 20px 0;
+    float: right;
+}
+
+.sm-main-nav-tabs li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+
+/* ================================================== */
+/* Sidebar
+/* ================================================== */
+
+.sm-sidebar-container {
+    position: absolute;
+    z-index: 900;
     height: 100%;
+    width: 33.333%;
+    position: absolute;
+    top: 60px; right: 0; bottom: 0;
+}
+
+.sm-sidebar {
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.sm-display-figure {
+    font-size: 24px;
+}
+
+#sm-display-number {
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+#sm-chart {
     width: 100%;
 }
 
-/*.leaflet-interactive {
-    fill: #333;
-    stroke: #f0f0f0;
-    stroke-weight: 3px;
-}*/
+
+/* ================================================== */
+/* Map styles
+/* ================================================== */
+
+#sm-map {
+    /*position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;*/
+    height: 100%;
+    width: 100%;
+}
 
 path.leaflet-interactive {
     fill: #333;
@@ -42,11 +157,10 @@ path.leaflet-interactive {
 
 path.overlay-circle {
     stroke: red;
-    stroke-width: 5;
+    stroke-width: 3;
     fill: red;
     fill-opacity: 0.5;
 }
-
 
 .leaflet-container {
     background: lightblue !important;
