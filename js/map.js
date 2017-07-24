@@ -128,13 +128,8 @@ function initChart(map, data, displayParameter) {
         .attr("transform", function(d, i) {
             return "translate(" + 80 + ",0)";
         })
-        .on("mouseover", function() {
-            d3.select(this)
-                .attr("fill", "red");
-        })
-        .on("mouseout", function(d, i) {
-            d3.select(this).transition().attr("fill", '#3E77B9');
-        });
+        .on("mouseover", triggerMouseover)
+        .on("mouseout", triggerMouseout);
 
     bar.append("text")
         .attr("x", 5)
@@ -148,28 +143,17 @@ function initChart(map, data, displayParameter) {
 }
 
 // ================================================== //
-// Helper functions
+// Event handlers
 // ================================================== //
 
-function calcBarLength(d) {
-    // return x(d.value);
-    // return d/10 * 20;
-}
-
-function barMouseover(d) {
+function triggerMouseover(d, i) {
     d3.select(this)
         .attr("fill", "red");
-    console.log(d)
 }
 
-function barMouseout(d) {
-    // d3.select(this)
-    //     .attr("fill", "red");
-
-
-    // d3.select(this).attr("fill", function() {
-    //     return "" + color(this.id) + "";
-    // });
+function triggerMouseout(d, i) {
+    d3.select(this)
+        .transition().attr("fill", '#3E77B9');
 }
 
 
