@@ -143,13 +143,18 @@ a:hover {
 }
 
 #sm-chart rect {
-    fill: #3E77B9;
+    /*fill: #3E77B9;*/
 }
 
 #sm-chart text {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    fill: #fff;
+    fill: #000;
     font-size: 12px;
+}
+
+#sm-chart .bar-label {
+    fill: #fff;
+    pointer-events: none;
 }
 
 

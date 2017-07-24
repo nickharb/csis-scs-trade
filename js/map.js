@@ -10,10 +10,12 @@ var ratData = [400, 900, 300, 600];
 var newData = [800, 200, 400, 500, 100];
 var barWidth = 20;
 var barSpacing = 10;
+var sidebarPadding = 10;
 
 // Global variables
 var circles;
 var svgChart;
+var sidebarWidth;
 
 // var map = L.map('sm-map').setView([39.0742, 21.8243], 3); // Whole Earth view
 var map = L.map('sm-map').setView([12.4438, 132.8517], 3); // SCS view
@@ -93,11 +95,11 @@ function initChart(map, data, displayParameter) {
         return b[displayParameter] - a[displayParameter];
     });
 
-    var width = 300;
+    sidebarWidth = $('#sm-chart').width();
 
-    // var x = d3.scaleLinear()
-    //     .domain([0, d3.max(data.features)])
-    //     .range([0, width]);
+    var x = d3.scaleLinear()
+        .domain([0, data[0][displayParameter] ])
+        .range([0, sidebarWidth - sidebarPadding - 80]);
 
     svgChart = d3.select('#sm-chart')
         .append('svg')
@@ -108,20 +110,41 @@ function initChart(map, data, displayParameter) {
         .data(tradeData.features)
         .enter().append("g")
         .attr("transform", function(d, i) {
-            return "translate(20," + i * barWidth + ")";
+            return "translate(0," + i * barWidth + ")";
         });
+
+    bar.append("text")
+        .attr("x", 0)
+        .attr("y", barWidth / 2)
+        .attr("dy", ".35em")
+        .text(function(d) { return d['country']; });
 
     bar.append("rect")
         .attr("width", function(d) {
-            return calcBarLength(d[displayParameter]); // length of each bar
+            return x(d[displayParameter]); // length of each bar
         })
-        .attr("height", barWidth - 1);
+        .attr("height", barWidth - 1)
+        .attr('fill', '#3E77B9')
+        .attr("transform", function(d, i) {
+            return "translate(" + 80 + ",0)";
+        })
+        .on("mouseover", function() {
+            d3.select(this)
+                .attr("fill", "red");
+        })
+        .on("mouseout", function(d, i) {
+            d3.select(this).transition().attr("fill", '#3E77B9');
+        });
 
     bar.append("text")
         .attr("x", 5)
         .attr("y", barWidth / 2)
         .attr("dy", ".35em")
-        .text(function(d) { return Math.round(d[displayParameter]); });
+        .attr('class', 'bar-label')
+        .text(function(d) { return Math.round(d[displayParameter]); })
+        .attr("transform", function(d, i) {
+            return "translate(" + 80 + ",0)";
+        });
 }
 
 // ================================================== //
@@ -129,13 +152,27 @@ function initChart(map, data, displayParameter) {
 // ================================================== //
 
 function calcBarLength(d) {
-    return d/10 * 20;
+    // return x(d.value);
+    // return d/10 * 20;
+}
+
+function barMouseover(d) {
+    d3.select(this)
+        .attr("fill", "red");
+    console.log(d)
+}
+
+function barMouseout(d) {
+    // d3.select(this)
+    //     .attr("fill", "red");
+
+
+    // d3.select(this).attr("fill", function() {
+    //     return "" + color(this.id) + "";
+    // });
 }
 
 
-// NEXT
-// Scale the chart to fit within the bounds of sidebar
-// Alter calcBarLength with d3.scale.linear()
 
 
 
