@@ -119,12 +119,13 @@ a:hover {
 .sm-sidebar {
     width: 100%;
     background: #fff;
-    padding: 20px;
+    padding: 5px 20px;
     margin-top: 20px;
 }
 
 .sm-display-figure {
     font-size: 24px;
+    margin: 10px 0;
 }
 
 #sm-display-number {

@@ -14,6 +14,7 @@ var sidebarPadding = 10;
 
 // Global variables
 var circles;
+var circlesObj;
 var svgChart;
 var sidebarWidth;
 
@@ -57,7 +58,7 @@ var tradeData = {"features":[{"id":"united-states","country":"United States","la
 // ================================================== //
 
 $.getJSON(myGeoJSONPath,function(data){
-    var displayParameter = 'percent_of_trade_high';
+    var displayParameter = 'trade_value_high';
 
     L.geoJson(data, {
         clickable: false,
@@ -66,6 +67,30 @@ $.getJSON(myGeoJSONPath,function(data){
 
     circles = addCircles(map, tradeData.features, displayParameter);
     initChart(map, tradeData.features, displayParameter);
+
+    $('#nav-tab-1 a').click(function(e) {
+        e.preventDefault();
+        $('#sm-chart-title').html('Total trade value through the South China Sea');
+        updateChart(map, tradeData.features, 'trade_value_high');
+        circles.clearLayers();
+        circles = addCircles(map, tradeData.features, 'trade_value_high');
+    });
+
+    $('#nav-tab-2 a').click(function(e) {
+        e.preventDefault();
+        $('#sm-chart-title').html('South China Sea Trade as a percentage of all trade');
+        updateChart(map, tradeData.features, 'percent_of_trade_high');
+        circles.clearLayers();
+        circles = addCircles(map, tradeData.features, 'percent_of_trade_high');
+    });
+
+    $('#nav-tab-3 a').click(function(e) {
+        e.preventDefault();
+        $('#sm-chart-title').html('South China Sea Trade as a percentage of GDP');
+        updateChart(map, tradeData.features, 'percent_of_gdp_high');
+        circles.clearLayers();
+        circles = addCircles(map, tradeData.features, 'percent_of_gdp_high');
+    });
 });
 
 
@@ -75,15 +100,32 @@ $.getJSON(myGeoJSONPath,function(data){
 
 function addCircles(map, data, displayParameter) {
     var c = {};
+    var circleArray = [];
+    // NOTE: Change this to d3 range
+    var multiplier;
+
+    switch (displayParameter) {
+        case 'trade_value_high':
+            multiplier = 1000;
+            break;
+        case 'percent_of_trade_high':
+            multiplier = 10000;
+            break;
+        case 'percent_of_gdp_high':
+            multiplier = 10000;
+            break;
+        default:
+            console.log('Error');
+    }
 
     for (var i = 0; i < data.length; i++) {
         var d = data[i];
-        var popupMarkup = '<p>'+d.country+'</p><p>'+Math.round(d[displayParameter])+'%</p>';
+        var popupMarkup = '<p>'+d.country+'</p><p>'+Math.round(d[displayParameter])+'</p>';
         
         var circle = new L.circle([d.latitude, d.longitude], {
-            radius: d[displayParameter] * 10000,
+            radius: d[displayParameter] * multiplier,
             className: 'overlay-circle'
-        }).addTo(map);
+        });
 
         circle.data = d; // Attach data to circles
         $(circle._path).attr('id', d.id); // Add unique country id to each circle
@@ -101,8 +143,12 @@ function addCircles(map, data, displayParameter) {
             $(this._path).removeClass('active');
         });
 
+        circleArray.push(circle);
+
         c[d.country] = circle;
     };
+    circlesObj = c;
+    c = L.layerGroup(circleArray).addTo(map);
     return c;
 }
 
@@ -166,6 +212,41 @@ function initChart(map, data, displayParameter) {
 // Event handlers
 // ================================================== //
 
+function updateChart(map, data, displayParameter) {
+    // Sort the data in descending order
+    data.sort(function(a, b){
+        return b[displayParameter] - a[displayParameter];
+    });
+
+    sidebarWidth = $('#sm-chart').width();
+
+    var x = d3.scaleLinear()
+        .domain([0, data[0][displayParameter] ])
+        .range([0, sidebarWidth - sidebarPadding - 80]);
+
+    var bar = svgChart.selectAll("g")
+        .attr("transform", function(d, i) {
+            return "translate(0," + i * barWidth + ")";
+        });
+
+    bar.selectAll('rect')
+        .transition()
+        .duration(500)
+        .attr("width", function(d) {
+            return x(d[displayParameter]); // length of each bar
+        });
+
+    bar.selectAll('.bar-label')
+        .text(function(d) { return Math.round(d[displayParameter]); });
+
+    // Update map
+    // $.each(circles, function(index, country) {
+    //     console.log( country );
+    //     // country.radius = data[displayParameter] * 1000;
+    //     country.setStyle({fill: "red"});
+    // });
+}
+
 function triggerCircleMouseover(id) {
     d3.select('#'+id)
         .attr("fill", "red");
@@ -177,7 +258,7 @@ function triggerCircleMouseout(id) {
 }
 
 function triggerBarMouseover(d, i) {
-    var c = circles[d.country];
+    var c = circlesObj[d.country];
     c.openPopup();
     $(c._path).addClass('active');
     d3.select(this)
@@ -185,7 +266,7 @@ function triggerBarMouseover(d, i) {
 }
 
 function triggerBarMouseout(d, i) {
-    var c = circles[d.country];
+    var c = circlesObj[d.country];
     c.closePopup();
     $(c._path).removeClass('active');
     d3.select(this)
