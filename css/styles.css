@@ -186,3 +186,19 @@ path.overlay-circle {
 .leaflet-container {
     background: #f0f0f0 !important;
 }
+
+/*Popup styles*/
+
+.leaflet-popup {
+    pointer-events: none;
+}
+
+.leaflet-popup-tip-container,
+.leaflet-popup-close-button {
+    display: none;
+}
+
+#sm-map path.active {
+    stroke: red;
+    fill: red;
+}
