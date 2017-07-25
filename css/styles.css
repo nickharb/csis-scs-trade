@@ -194,12 +194,23 @@ path.overlay-circle {
     pointer-events: none;
 }
 
+.leaflet-popup p {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.leaflet-popup p:last-of-type {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
 .leaflet-popup-tip-container,
 .leaflet-popup-close-button {
     display: none;
 }
 
 #sm-map path.active {
-    stroke: red;
-    fill: red;
+    stroke: #EA3B33;
+    fill: #EA3B33;
 }

@@ -243,13 +243,13 @@ function updateChart(map, data, displayParameter) {
     // $.each(circles, function(index, country) {
     //     console.log( country );
     //     // country.radius = data[displayParameter] * 1000;
-    //     country.setStyle({fill: "red"});
+    //     country.setStyle({fill: "#EA3B33"});
     // });
 }
 
 function triggerCircleMouseover(id) {
     d3.select('#'+id)
-        .attr("fill", "red");
+        .attr("fill", "#EA3B33");
 }
 
 function triggerCircleMouseout(id) {
@@ -262,7 +262,7 @@ function triggerBarMouseover(d, i) {
     c.openPopup();
     $(c._path).addClass('active');
     d3.select(this)
-        .attr("fill", "red");
+        .attr("fill", "#EA3B33");
 }
 
 function triggerBarMouseout(d, i) {
