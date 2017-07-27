@@ -212,6 +212,36 @@ function initChart(map, data, displayParameter) {
 // Event handlers
 // ================================================== //
 
+// DROPDOWN MENU HANDLER
+// function initEventHandlers() {
+//     var menu = d3.select("#menu select")
+//         .on("change", change);
+// }
+
+// D3 CSV DATA IMPORT FUNCTION
+// d3.csv("states-age.csv", function(data) {
+//   states = data;
+
+//   var ages = d3.keys(states[0]).filter(function(key) {
+//     return key != "State" && key != "Total";
+//   });
+
+//   states.forEach(function(state) {
+//     ages.forEach(function(age) {
+//       state[age] = state[age] / state.Total;
+//     });
+//   });
+
+//   menu.selectAll("option") // DYNAMICALLY ADD OPTIONS TO DROPDOWN MENU
+//       .data(ages)
+//     .enter().append("option")
+//       .text(function(d) { return d; });
+
+//   menu.property("value", "18 to 24 Years"); // SET CURRENT DROPDOWN PROPERTY
+
+//   redraw(); // CREATE REDRAW FUNCTION TO UPDATE CHART
+// });
+
 function updateChart(map, data, displayParameter) {
     // Sort the data in descending order
     data.sort(function(a, b){
@@ -272,9 +302,6 @@ function triggerBarMouseout(d, i) {
     d3.select(this)
         .attr("fill", '#3E77B9');
 }
-
-
-
 
 
 
