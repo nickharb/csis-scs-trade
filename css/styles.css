@@ -97,9 +97,18 @@ a:hover {
     float: right;
 }
 
-.sm-main-nav-tabs li {
+.sm-nav-tabs li {
     display: inline-block;
     margin: 0 5px;
+}
+
+.sm-sidebar .sm-nav-tabs li {
+    display: block;
+    margin: 5px 0;
+}
+
+.sm-sidebar .sm-nav-tabs {
+    margin-bottom: 20px;
 }
 
 
@@ -203,7 +212,7 @@ path.map-line {
     padding: 0 !important;
 }
 
-.leaflet-popup p:last-of-type {
+.leaflet-popup p:first-of-type {
     font-size: 18px;
     font-weight: bold;
     color: #333;

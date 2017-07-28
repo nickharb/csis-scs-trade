@@ -55,15 +55,15 @@ var tradeData = {"features":[{"id":"united-states","country":"United States","la
 {"id":"malaysia","country":"Malaysia","latitude":4.2105,"longitude":101.9758,"percent_of_world_gdp":0.391793943,"trade_value_high":250.4699781,"trade_value_low":212.702462,"percent_of_trade_high":68.5271163,"percent_of_trade_low":58.19414552,"percent_of_gdp_high":84.5156981,"percent_of_gdp_low":71.77186345}]}
 
 var bilateralData = [{"origin":"East Asia","destination":"North America","origin-latlong":"33.053667, 107.933937","destination-latlong":"37.639343, -95.796531","high-end":472575638003,"low-end":128946764105},
-{"origin":"East Asia","destination":"South America","origin-latlong":"33.053667, 107.933938","destination-latlong":"-14.701720, -58.706687","high-end":99600436072,"low-end":54471783041},
-{"origin":"East Asia","destination":"Middle East","origin-latlong":"33.053667, 107.933939","destination-latlong":"33.347838, 48.168313","high-end":194622825587,"low-end":194622825587},
-{"origin":"East Asia","destination":"Africa","origin-latlong":"33.053667, 107.933940","destination-latlong":"9.176788, 19.164407","high-end":132048901733,"low-end":132048901733},
+{"origin":"East Asia","destination":"South America","origin-latlong":"33.053667, 107.933938","destination-latlong":"-6.229760, -59.765475","high-end":99600436072,"low-end":54471783041},
+{"origin":"East Asia","destination":"Middle East","origin-latlong":"33.053667, 107.933939","destination-latlong":"30.294737, 51.732090","high-end":194622825587,"low-end":194622825587},
+{"origin":"East Asia","destination":"Africa","origin-latlong":"33.053667, 107.933940","destination-latlong":"3.599309, 24.785304","high-end":132048901733,"low-end":132048901733},
 {"origin":"East Asia","destination":"Europe","origin-latlong":"33.053667, 107.933941","destination-latlong":"49.202424, 16.527689","high-end":564964812611,"low-end":564964812611},
 {"origin":"East Asia","destination":"South Asia","origin-latlong":"33.053667, 107.933942","destination-latlong":"20.539049, 79.281594","high-end":189972574612,"low-end":189754640039},
 {"origin":"North America","destination":"East Asia","origin-latlong":"37.639343, -95.796531","destination-latlong":"33.053667, 107.933937","high-end":141414002999,"low-end":94450593149},
-{"origin":"South America","destination":"East Asia","origin-latlong":"-14.701720, -58.706687","destination-latlong":"33.053667, 107.933938","high-end":114125954136,"low-end":94794495361},
-{"origin":"Middle East","destination":"East Asia","origin-latlong":"33.347838, 48.168313","destination-latlong":"33.053667, 107.933939","high-end":219288990244,"low-end":219288990244},
-{"origin":"Africa","destination":"East Asia","origin-latlong":"9.176788, 19.164407","destination-latlong":"33.053667, 107.933940","high-end":64244133876,"low-end":64244133876},
+{"origin":"South America","destination":"East Asia","origin-latlong":"-6.229760, -59.765475","destination-latlong":"33.053667, 107.933938","high-end":114125954136,"low-end":94794495361},
+{"origin":"Middle East","destination":"East Asia","origin-latlong":"30.294737, 51.732090","destination-latlong":"33.053667, 107.933939","high-end":219288990244,"low-end":219288990244},
+{"origin":"Africa","destination":"East Asia","origin-latlong":"3.599309, 24.785304","destination-latlong":"33.053667, 107.933940","high-end":64244133876,"low-end":64244133876},
 {"origin":"Europe","destination":"East Asia","origin-latlong":"49.202424, 16.527689","destination-latlong":"33.053667, 107.933941","high-end":407111081409,"low-end":407111081409},
 {"origin":"South Asia","destination":"East Asia","origin-latlong":"20.539049, 79.281594","destination-latlong":"33.053667, 107.933942","high-end":78230912673,"low-end":65088113515}];
 
@@ -79,28 +79,59 @@ $.getJSON(myGeoJSONPath,function(data){
         style: myCustomStyle
     }).addTo(map);
 
+    $('#sm-chart').hide();
+
     // circles = addCircles(map, tradeData.features, displayParameter);initBilateralLayer
-    circles = initBilateralLayer(map, bilateralData);
+
+    // Bilateral circles map visualization
+    var exports = bilateralData.slice(0, 6).sort(function(a, b){ return b['low-end'] - a['low-end']; });
+    // $('#sm-chart-title').html('Exports from East Asia passing through the South China Sea');
+    circles = initBilateralLayer(map, exports, 'destination-latlong');
+
+    // Sidebar chart
     initChart(map, tradeData.features, displayParameter);
 
     $('#nav-tab-1 a').click(function(e) {
         e.preventDefault();
-        $('#sm-chart-title').html('Total trade value through the South China Sea');
-        updateChart(map, tradeData.features, 'trade_value_high');
+        $('#sm-chart').fadeOut();
+        var exports = bilateralData.slice(0, 6).sort(function(a, b){ return b['low-end'] - a['low-end']; });
+        $('#sm-chart-title').html('Exports from East Asia passing through the South China Sea');
+        // updateChart(map, exports, 'destination');
         circles.clearLayers();
-        circles = addCircles(map, tradeData.features, 'trade_value_high');
+        circles = initBilateralLayer(map, exports, 'destination-latlong');
     });
 
     $('#nav-tab-2 a').click(function(e) {
         e.preventDefault();
+        $('#sm-chart').fadeOut();
+        var exports = bilateralData.slice(6, 12).sort(function(a, b){ return b['low-end'] - a['low-end']; });
+        $('#sm-chart-title').html('Exports to East Asia passing through the South China Sea');
+        // updateChart(map, exports, 'origin');
+        circles.clearLayers();
+        circles = initBilateralLayer(map, exports, 'origin-latlong');
+    });
+
+    $('#nav-tab-3 a').click(function(e) {
+        e.preventDefault();
+        $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('Total trade value through the South China Sea');
+        // updateChart(map, tradeData.features, 'trade_value_high');
+        circles.clearLayers();
+        circles = addCircles(map, tradeData.features, 'trade_value_high');
+    });
+
+    $('#nav-tab-4 a').click(function(e) {
+        e.preventDefault();
+        $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('South China Sea Trade as a percentage of all trade');
         updateChart(map, tradeData.features, 'percent_of_trade_high');
         circles.clearLayers();
         circles = addCircles(map, tradeData.features, 'percent_of_trade_high');
     });
 
-    $('#nav-tab-3 a').click(function(e) {
+    $('#nav-tab-5 a').click(function(e) {
         e.preventDefault();
+        $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('South China Sea Trade as a percentage of GDP');
         updateChart(map, tradeData.features, 'percent_of_gdp_high');
         circles.clearLayers();
@@ -137,7 +168,7 @@ function addCircles(map, data, displayParameter) {
 
     for (var i = 0; i < data.length; i++) {
         var d = data[i];
-        var popupMarkup = '<p>'+d.country+'</p><p>'+Math.round(d[displayParameter])+'</p>';
+        var popupMarkup = '<p>'+Math.round(d[displayParameter])+'</p><p>'+d.country+'</p>';
         
         var circle = new L.circle([d.latitude, d.longitude], {
             radius: d[displayParameter] * multiplier,
@@ -172,13 +203,12 @@ function addCircles(map, data, displayParameter) {
 
 // Regional bilateral trade map ============================= //
 
-function initBilateralLayer(map, data) {
+function initBilateralLayer(map, data, latlong) {
     var c;
     var circleArray = [];
-    var trade = 'low-end';
     var multiplier = 0.5;
-    var formatLabel = function(t) {
-        return Math.round(t/1000000000);
+    var formatPopup = function(t) {
+        return '$' + Math.round(t/1000000000) + ' billion';
     };
     var formatCircle = function(c) {
         return c/500000;
@@ -190,14 +220,16 @@ function initBilateralLayer(map, data) {
     });
     circleArray.push(circleOrigin);
 
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < data.length; i++) {
         var d = data[i];
-        var latitude = d['destination-latlong'].split(',')[0];
-        var longitude = d['destination-latlong'].split(',')[1];
+        var latitude = d[latlong].split(',')[0];
+        var longitude = d[latlong].split(',')[1];
+
+        var popupMarkup = '<p>'+formatPopup(d['low-end'])+'</p><p>Origin: '+d.origin+'</p><p>Destination: '+d.destination+'</p>';
         
         // Draw a circle
         var circle = new L.circle([latitude, longitude], {
-            radius: formatCircle(d[trade]),
+            radius: formatCircle(d['low-end']),
             className: 'overlay-circle'
         });
 
@@ -216,14 +248,15 @@ function initBilateralLayer(map, data) {
             pulseColor: '#3E77B9'
         });
 
+        circle.bindPopup(popupMarkup);
         circle.on('mouseover', function (e) {
-            // triggerCircleMouseover(this.data.id);
-            // this.openPopup();
+            // triggerBilateralMouseover(this.data.id);
+            this.openPopup();
             $(this._path).addClass('active');
         });
         circle.on('mouseout', function (e) {
-            // triggerCircleMouseout(this.data.id);
-            // this.closePopup();
+            // triggerBilateralMouseout(this.data.id);
+            this.closePopup();
             $(this._path).removeClass('active');
         });
 
