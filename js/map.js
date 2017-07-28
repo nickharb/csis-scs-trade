@@ -37,7 +37,9 @@ mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 // }).addTo(map);
 
 var myCustomStyle = {
-    stroke: true
+    stroke: true,
+    color: '#f0f0f0',
+    weight: 2
 }
 
 var tradeData = {"features":[{"id":"united-states","country":"United States","latitude":37.0902,"longitude":-95.7129,"percent_of_world_gdp":24.54880057,"trade_value_high":564.445,"trade_value_low":208.4236506,"percent_of_trade_high":15.49448549,"percent_of_trade_low":5.721402848,"percent_of_gdp_high":3.039700362,"percent_of_gdp_low":1.12242193},
@@ -52,6 +54,18 @@ var tradeData = {"features":[{"id":"united-states","country":"United States","la
 {"id":"singapore","country":"Singapore","latitude":1.3521,"longitude":103.8198,"percent_of_world_gdp":0.392595874,"trade_value_high":401.7533655,"trade_value_low":0,"percent_of_trade_high":65.61983384,"percent_of_trade_low":0,"percent_of_gdp_high":135.2861118,"percent_of_gdp_low":0},
 {"id":"malaysia","country":"Malaysia","latitude":4.2105,"longitude":101.9758,"percent_of_world_gdp":0.391793943,"trade_value_high":250.4699781,"trade_value_low":212.702462,"percent_of_trade_high":68.5271163,"percent_of_trade_low":58.19414552,"percent_of_gdp_high":84.5156981,"percent_of_gdp_low":71.77186345}]}
 
+var bilateralData = [{"origin":"East Asia","destination":"North America","origin-latlong":"33.053667, 107.933937","destination-latlong":"37.639343, -95.796531","high-end":472575638003,"low-end":128946764105},
+{"origin":"East Asia","destination":"South America","origin-latlong":"33.053667, 107.933938","destination-latlong":"-14.701720, -58.706687","high-end":99600436072,"low-end":54471783041},
+{"origin":"East Asia","destination":"Middle East","origin-latlong":"33.053667, 107.933939","destination-latlong":"33.347838, 48.168313","high-end":194622825587,"low-end":194622825587},
+{"origin":"East Asia","destination":"Africa","origin-latlong":"33.053667, 107.933940","destination-latlong":"9.176788, 19.164407","high-end":132048901733,"low-end":132048901733},
+{"origin":"East Asia","destination":"Europe","origin-latlong":"33.053667, 107.933941","destination-latlong":"49.202424, 16.527689","high-end":564964812611,"low-end":564964812611},
+{"origin":"East Asia","destination":"South Asia","origin-latlong":"33.053667, 107.933942","destination-latlong":"20.539049, 79.281594","high-end":189972574612,"low-end":189754640039},
+{"origin":"North America","destination":"East Asia","origin-latlong":"37.639343, -95.796531","destination-latlong":"33.053667, 107.933937","high-end":141414002999,"low-end":94450593149},
+{"origin":"South America","destination":"East Asia","origin-latlong":"-14.701720, -58.706687","destination-latlong":"33.053667, 107.933938","high-end":114125954136,"low-end":94794495361},
+{"origin":"Middle East","destination":"East Asia","origin-latlong":"33.347838, 48.168313","destination-latlong":"33.053667, 107.933939","high-end":219288990244,"low-end":219288990244},
+{"origin":"Africa","destination":"East Asia","origin-latlong":"9.176788, 19.164407","destination-latlong":"33.053667, 107.933940","high-end":64244133876,"low-end":64244133876},
+{"origin":"Europe","destination":"East Asia","origin-latlong":"49.202424, 16.527689","destination-latlong":"33.053667, 107.933941","high-end":407111081409,"low-end":407111081409},
+{"origin":"South Asia","destination":"East Asia","origin-latlong":"20.539049, 79.281594","destination-latlong":"33.053667, 107.933942","high-end":78230912673,"low-end":65088113515}];
 
 // ================================================== //
 // Initialization
@@ -65,7 +79,8 @@ $.getJSON(myGeoJSONPath,function(data){
         style: myCustomStyle
     }).addTo(map);
 
-    circles = addCircles(map, tradeData.features, displayParameter);
+    // circles = addCircles(map, tradeData.features, displayParameter);initBilateralLayer
+    circles = initBilateralLayer(map, bilateralData);
     initChart(map, tradeData.features, displayParameter);
 
     $('#nav-tab-1 a').click(function(e) {
@@ -97,6 +112,8 @@ $.getJSON(myGeoJSONPath,function(data){
 // ================================================== //
 // Chart constructors
 // ================================================== //
+
+// Intra-regional trade map ============================= //
 
 function addCircles(map, data, displayParameter) {
     var c = {};
@@ -149,6 +166,73 @@ function addCircles(map, data, displayParameter) {
     };
     circlesObj = c;
     c = L.layerGroup(circleArray).addTo(map);
+    return c;
+}
+
+
+// Regional bilateral trade map ============================= //
+
+function initBilateralLayer(map, data) {
+    var c;
+    var circleArray = [];
+    var trade = 'low-end';
+    var multiplier = 0.5;
+    var formatLabel = function(t) {
+        return Math.round(t/1000000000);
+    };
+    var formatCircle = function(c) {
+        return c/500000;
+    }
+
+    var circleOrigin = new L.circle([33.053667, 107.933937], {
+        radius: 100000,
+        className: 'overlay-circle'
+    });
+    circleArray.push(circleOrigin);
+
+    for (var i = 0; i < 6; i++) {
+        var d = data[i];
+        var latitude = d['destination-latlong'].split(',')[0];
+        var longitude = d['destination-latlong'].split(',')[1];
+        
+        // Draw a circle
+        var circle = new L.circle([latitude, longitude], {
+            radius: formatCircle(d[trade]),
+            className: 'overlay-circle'
+        });
+
+        // Draw a line from origin to destination
+        var latlngs = [
+            [d['origin-latlong'].split(',')[0], d['origin-latlong'].split(',')[1]],
+            [d['destination-latlong'].split(',')[0], d['destination-latlong'].split(',')[1]]
+        ];
+        var polyline = L.polyline.antPath(latlngs, {
+            lineCap: 'round',
+            className: 'map-line',
+            dashArray: '5, 7',
+            delay: 1500,
+            opacity: 1,
+            weight: 2,
+            pulseColor: '#3E77B9'
+        });
+
+        circle.on('mouseover', function (e) {
+            // triggerCircleMouseover(this.data.id);
+            // this.openPopup();
+            $(this._path).addClass('active');
+        });
+        circle.on('mouseout', function (e) {
+            // triggerCircleMouseout(this.data.id);
+            // this.closePopup();
+            $(this._path).removeClass('active');
+        });
+
+        circleArray.push(circle, polyline);
+    };
+    
+    c = L.layerGroup(circleArray).addTo(map);
+    // zoom the map to the polyline
+    // map.fitBounds(c.getBounds());
     return c;
 }
 
