@@ -79,8 +79,6 @@ $.getJSON(myGeoJSONPath,function(data){
         style: myCustomStyle
     }).addTo(map);
 
-    $('#sm-chart').hide();
-
     // circles = addCircles(map, tradeData.features, displayParameter);initBilateralLayer
 
     // Bilateral circles map visualization
@@ -90,6 +88,7 @@ $.getJSON(myGeoJSONPath,function(data){
 
     // Sidebar chart
     initChart(map, tradeData.features, displayParameter);
+    $('#sm-chart').hide();
 
     $('#nav-tab-1 a').click(function(e) {
         e.preventDefault();
