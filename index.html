@@ -2,20 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
     <title>CSIS SCS Trade</title>
+    <meta name="viewport" content="width=device-width">
+
     <link href="css/vendor/leaflet.css" rel="stylesheet" type="text/css"/>
     <link href="css/styles.css" rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href="http://favicon.cargocollective.com/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Slab:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Condensed:400,700|Roboto+Slab:400,700" rel="stylesheet">
 </head>
 <body>
     <div id="sm-interactive">
         <div class="sm-main-header">
             <div class="sm-main-title">
-                <h1>Putting a Price on the Strait of Malacca</h1>
+                <h1><span>Putting a Price on the</span>Strait of Malacca</h1>
             </div>
             <div class="sm-main-nav">
                 <ul class="sm-nav-tabs">
-                    <li id="nav-tab-1"><a href="#tab-1">Total Trade Value</a></li>
+                    <li id="nav-tab-1"><a href="#tab-1" class="active">Total Trade Value</a></li>
                     <li id="nav-tab-2"><a href="#tab-2">Percentage of All Trade</a></li>
                     <li id="nav-tab-3"><a href="#tab-3">Percentage of GDP</a></li>
                 </ul>
@@ -24,12 +26,58 @@
 
         <div class="sm-sidebar-container">
             <div class="sm-sidebar">
-                <h2>Global South China Sea Trade</h2>
-                <div class="sm-subnav">Year: 2016</div>
+                <div class="sm-sidebar-header" id="sm-display-sidebar-header">
+                    <h2>Global South China Sea Trade</h2>
+                    <!-- <div class="sm-subnav">Year: 2016</div> -->
+                    <h3>Year: 2016</h3>
+                </div>
                 <h3 class="sm-display-figure"><span class="sm-dollar-sign">$</span><span id="sm-display-number">3.4-4.2</span> trillion</h3>
             </div>
+
             <div class="sm-sidebar">
-                <h2 id="sm-chart-title">Total trade value through the South China Sea</h2>
+                <div class="sm-sidebar-header">
+                    <h2>Region-to-region trade</h2>
+                    <h3>Top five regional trade pairs</h3>
+                </div>
+                <table id="sm-table">
+                    <tr class="sm-header-row">
+                        <th>Export Direction</th>
+                        <th>Export Value<br>(billions)</th>
+                        <th>% of All<br>SCS Trade</th>
+                    </tr>
+                    <tr class="sm-top-row">
+                        <td>East Asia &rarr; East Asia</td>
+                        <td>$1,096</td>
+                        <td>32%</td>
+                    </tr>
+                    <tr>
+                        <td>East Asia &rarr; Europe</td>
+                        <td>$428</td>
+                        <td>13%</td>
+                    </tr>
+                    <tr>
+                        <td>Middle East &rarr; East Asia</td>
+                        <td>$422</td>
+                        <td>12%</td>
+                    </tr>
+                    <tr>
+                        <td>Europe &rarr; East Asia</td>
+                        <td>$370</td>
+                        <td>11%</td>
+                    </tr>
+                    <tr>
+                        <td>East Asia &rarr; Middle East</td>
+                        <td>$231</td>
+                        <td>7%</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="sm-sidebar">
+                <div class="sm-sidebar-header">
+                    <h2 id="sm-chart-title">Total SCS trade value (billions)</h2>
+                    <h3>Top ten countries</h3>
+                </div>
                 <!-- <ul class="sm-nav-tabs">
                     <li id="subnav-tab-1"><a href="#tab-1">Exports from East Asia</a></li>
                     <li id="subnav-tab-2"><a href="#tab-2">Exports to East Asia</a></li>

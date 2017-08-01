@@ -16,7 +16,7 @@ body {
     padding: 0;
     width: 100%;
     color: #333;
-    background-color: #fefefe;
+    background-color: #fff;
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -27,12 +27,14 @@ h1, h2, h3, h4, h5, h6 {
 
 h2 {
     font-size: 18px;
-    font-weight: bold;
+    /*font-weight: bold;*/
+    margin: 10px 0 3px;
 }
 
 h3 {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    font-size: 13px;
+    margin: 0;
 }
 
 p {
@@ -73,23 +75,32 @@ a:hover {
     z-index: 900;*/
     height: 60px;
     padding: 0 20px;
+    background: #fff;
 }
 
 .sm-main-title {
     float: left;
+    margin-top: 5px;
 }
 
 .sm-main-title h1 {
-    color: #333;
-    font-size: 18px;
-    margin: 20px 0;
-    line-height: 1em;
+    /*color: #333;*/
+    font-size: 26px;
+    margin: 0;
+    /*margin: 20px 0;*/
+    line-height: 0.85em;
+    font-weight: bold;
 }
 
 .sm-main-title span {
-    /*font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    letter-spacing: 0.01em;*/
+    display: block;
+    font-weight: normal;
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-left: 2px;
+    /*margin: 0;*/
+    text-transform: uppercase;
 }
 
 .sm-main-nav {
@@ -102,14 +113,23 @@ a:hover {
     margin: 0 5px;
 }
 
-.sm-sidebar .sm-nav-tabs li {
+.sm-nav-tabs a {
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.sm-nav-tabs a.active {
+    color: #EA3B33;
+    cursor: default;
+}
+
+/*.sm-sidebar .sm-nav-tabs li {
     display: block;
     margin: 5px 0;
 }
 
 .sm-sidebar .sm-nav-tabs {
     margin-bottom: 20px;
-}
+}*/
 
 
 /* ================================================== */
@@ -117,7 +137,9 @@ a:hover {
 /* ================================================== */
 
 .sm-sidebar-container {
-    position: absolute;
+    background: #fff;
+    margin-top: 20px;
+    border-top: 2px solid #333;
     z-index: 900;
     height: 100%;
     width: 33.333%;
@@ -126,21 +148,73 @@ a:hover {
 }
 
 .sm-sidebar {
-    width: 100%;
     background: #fff;
-    padding: 5px 20px;
-    margin-top: 20px;
+    padding: 10px 0;
+    margin: 0 20px;
+    border-bottom: 1px solid #eee;
+    /*margin-top: 20px;*/
 }
 
-.sm-display-figure {
+.sm-sidebar h3 {
+    font-weight: normal;
+    /*font-style: italic;*/
+    color: #777;
+}
+
+.sm-sidebar-header {
+    margin-bottom: 15px;
+}
+
+#sm-display-sidebar-header {
+    margin-bottom: 0;
+}
+
+.sm-sidebar h3.sm-display-figure {
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #263D45;
+    font-style: normal;
     font-size: 24px;
-    margin: 10px 0;
+    margin: 0 0 5px;
 }
 
 #sm-display-number {
     font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 36px;
+    font-size: 48px;
     font-weight: bold;
+    padding-right: 2px;
+}
+
+.sm-dollar-sign {
+    /*font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    font-weight: bold;
+    vertical-align: top;
+    line-height: 2.2em;
+    padding-right: 3px;
+}
+
+
+/* ================================================== */
+/* Table styles
+/* ================================================== */
+
+#sm-table {
+    width: 100%;
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    padding-bottom: 15px;
+}
+
+#sm-table th {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align: left;
+    font-weight: 700;
+    padding: 2px 0;
+    vertical-align: bottom;
+    /*border-bottom: 1px solid #eee;*/
+}
+
+.sm-top-row td {
+    padding-top: 5px;  
 }
 
 
@@ -156,6 +230,7 @@ a:hover {
     fill: #3E77B9;
 }
 
+.bar rect.active,
 .bar:hover rect {
     fill: #EA3B33;
 }
@@ -181,7 +256,7 @@ a:hover {
     /*position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;*/
     height: 100%;
-    width: 100%;
+    width: 66.666%;
 }
 
 path.leaflet-interactive {
@@ -213,11 +288,15 @@ path.map-line {
 }
 
 .leaflet-popup p {
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #263D45;
     margin: 0 !important;
     padding: 0 !important;
 }
 
 .leaflet-popup p:first-of-type {
+    font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #263D45;
     font-size: 18px;
     font-weight: bold;
     color: #333;
@@ -231,5 +310,24 @@ path.map-line {
 #sm-map path.active {
     stroke: #EA3B33;
     fill: #EA3B33;
+}
+
+@media (max-width: 800px) {
+    #sm-interactive {
+        background: #fff;
+    }
+
+    #sm-map {
+        display: none;
+    }
+
+    .sm-sidebar-container {
+        width: inherit;
+        margin-top: 5px;
+    }
+
+    .sm-main-nav {
+        display: none;
+    }
 }
 

@@ -18,7 +18,7 @@ var circlesObj;
 var svgChart;
 
 // var map = L.map('sm-map').setView([39.0742, 21.8243], 3); // Whole Earth view
-var map = L.map('sm-map').setView([12.4438, 132.8517], 3); // SCS view
+var map = L.map('sm-map').setView([18.4438, 110.8517], 4); // SCS view
 
 mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 
@@ -82,7 +82,7 @@ var bilateralData = [{"origin":"East Asia","destination":"North America","origin
 // ================================================== //
 
 $.getJSON(myGeoJSONPath,function(data){
-    var displayParameter = 'trade_value_high';
+    var displayParameter = 'trade_value_low';
 
     L.geoJson(data, {
         clickable: false,
@@ -98,29 +98,35 @@ $.getJSON(myGeoJSONPath,function(data){
 
     $('#nav-tab-1 a').click(function(e) {
         e.preventDefault();
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
         $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('Total trade value through the South China Sea');
-        redrawChart('trade_value_high');
+        $('#sm-chart-title').html('Total SCS trade value (billions)');
+        redrawChart('trade_value_low');
         circles.clearLayers();
-        circles = addCircles(map, tradeData, 'trade_value_high');
+        circles = addCircles(map, tradeData, 'trade_value_low');
     });
 
     $('#nav-tab-2 a').click(function(e) {
         e.preventDefault();
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
         $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('South China Sea Trade as a percentage of all trade');
-        redrawChart('percent_of_trade_high');
+        $('#sm-chart-title').html('SCS trade as % of all trade in goods');
+        redrawChart('percent_of_trade_low');
         circles.clearLayers();
-        circles = addCircles(map, tradeData, 'percent_of_trade_high');
+        circles = addCircles(map, tradeData, 'percent_of_trade_low');
     });
 
     $('#nav-tab-3 a').click(function(e) {
         e.preventDefault();
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
         $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('South China Sea Trade as a percentage of GDP');
-        redrawChart('percent_of_gdp_high');
+        $('#sm-chart-title').html('SCS trade as % of GDP');
+        redrawChart('percent_of_gdp_low');
         circles.clearLayers();
-        circles = addCircles(map, tradeData, 'percent_of_gdp_high');
+        circles = addCircles(map, tradeData, 'percent_of_gdp_low');
     });
 });
 
@@ -136,15 +142,16 @@ function addCircles(map, data, displayParameter) {
     var circleArray = [];
     // NOTE: Change this to d3 range
     var multiplier;
+    var popupMarkup;
 
     switch (displayParameter) {
-        case 'trade_value_high':
-            multiplier = 800;
+        case 'trade_value_low':
+            multiplier = 700;
             break;
-        case 'percent_of_trade_high':
+        case 'percent_of_trade_low':
             multiplier = 5000;
             break;
-        case 'percent_of_gdp_high':
+        case 'percent_of_gdp_low':
             multiplier = 4000;
             break;
         default:
@@ -155,7 +162,12 @@ function addCircles(map, data, displayParameter) {
         var d = data[i];
         var latitude = d.latlong.split(',')[0];
         var longitude = d.latlong.split(',')[1];
-        var popupMarkup = '<p>'+Math.round(d[displayParameter])+'</p><p>'+d.country+'</p>';
+        
+        if (displayParameter == 'trade_value_low') {
+            popupMarkup = '<p>$'+Math.round(d[displayParameter])+' billion</p><p>'+d.country+'</p>';
+        } else {
+            popupMarkup = '<p>'+Math.round(d[displayParameter])+'%</p><p>'+d.country+'</p>';
+        }
         
         var circle = new L.circle([latitude, longitude], {
             radius: d[displayParameter] * multiplier,
@@ -167,7 +179,7 @@ function addCircles(map, data, displayParameter) {
 
         circle.bindPopup(popupMarkup);
         circle.on('mouseover', function (e) {
-            // console.log()
+            console.log(this.data.id)
             triggerCircleMouseover(this.data.id);
             this.openPopup();
             $(this._path).addClass('active');
@@ -247,6 +259,13 @@ function redrawChart(parameter) {
     // Sort the data in descending order and get top 10
     var top = tradeData.sort(function(a, b) { return b[parameter] - a[parameter]; }).slice(0, 10);
     var sidebarWidth = $('#sm-chart').width();
+    var format = function(t) {
+        if (parameter == 'trade_value_low') {
+            return '$' + Math.round(t);
+        } else {
+            return Math.round(t) + '%';
+        }
+    }
 
     // Define the domain
     var x = d3.scaleLinear()
@@ -271,20 +290,20 @@ function redrawChart(parameter) {
         .transition(t)
         .attr("width", function(d) {
             return x(d[parameter]); // length of each bar
+        })
+        .attr('id', function(d) { // NOTE: Better way to activate bars from map circles?
+            return d['id'] // Attach a country id to each bar to access via map
         });
     bar.select(".label")
         .text(function(d) { return d['country']; });
     bar.select(".value")
-        .text(function(d) { return Math.round(d[parameter]); });
+        .text(function(d) { return format(d[parameter]); });
 
     // ENTER new elements present in new data
     var barEnter = bar.enter().append("g")
         .attr("class", "bar")
         .attr("transform", function(d, i) {
             return "translate(80," + i * barWidth + ")"; // NOTE: Improve how we y position?
-        })
-        .attr('id', function(d) { // NOTE: Better way to activate bars from map circles?
-            return d['id'] // Attach a country id to each bar to access via map
         })
         .on("mouseover", triggerBarMouseover)
         .on("mouseout", triggerBarMouseout);
@@ -293,7 +312,10 @@ function redrawChart(parameter) {
         .attr("width", function(d) {
             return x(d[parameter]); // length of each bar
         })
-        .attr("height", barWidth - 1);
+        .attr("height", barWidth - 1)
+        .attr('id', function(d) { // NOTE: Better way to activate bars from map circles?
+            return d['id'] // Attach a country id to each bar to access via map
+        });
 
     barEnter.append("text")
         .attr("class", "label")
@@ -308,17 +330,15 @@ function redrawChart(parameter) {
         .attr("x", 5)
         .attr("y", barWidth / 2)
         .attr("dy", ".35em")
-        .text(function(d) { return Math.round(d[parameter]); });
+        .text(function(d) { return format(d[parameter]); });
 }
 
 function triggerCircleMouseover(id) {
-    d3.select('#'+id)
-        .attr("fill", "#EA3B33");
+    $('#'+id).addClass('active');
 }
 
 function triggerCircleMouseout(id) {
-    d3.select('#'+id)
-        .attr("fill", '#3E77B9');
+    $('#'+id).removeClass('active');
 }
 
 function triggerBarMouseover(d, i) {
