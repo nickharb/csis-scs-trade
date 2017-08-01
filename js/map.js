@@ -16,7 +16,6 @@ var sidebarPadding = 10;
 var circles;
 var circlesObj;
 var svgChart;
-var sidebarWidth;
 
 // var map = L.map('sm-map').setView([39.0742, 21.8243], 3); // Whole Earth view
 var map = L.map('sm-map').setView([12.4438, 132.8517], 3); // SCS view
@@ -42,17 +41,27 @@ var myCustomStyle = {
     weight: 2
 }
 
-var tradeData = {"features":[{"id":"united-states","country":"United States","latitude":37.0902,"longitude":-95.7129,"percent_of_world_gdp":24.54880057,"trade_value_high":564.445,"trade_value_low":208.4236506,"percent_of_trade_high":15.49448549,"percent_of_trade_low":5.721402848,"percent_of_gdp_high":3.039700362,"percent_of_gdp_low":1.12242193},
-{"id":"china","country":"China","latitude":35.8617,"longitude":104.1954,"percent_of_world_gdp":14.80554152,"trade_value_high":2164.31892,"trade_value_low":1471.57093,"percent_of_trade_high":58.08606989,"percent_of_trade_low":39.49407413,"percent_of_gdp_high":19.32575111,"percent_of_gdp_low":13.14002908},
-{"id":"japan","country":"Japan","latitude":36.2048,"longitude":138.2529,"percent_of_world_gdp":6.529985327,"trade_value_high":387.4834341,"trade_value_low":239.5373546,"percent_of_trade_high":30.9540199,"percent_of_trade_low":19.13538332,"percent_of_gdp_high":7.84477257,"percent_of_gdp_low":4.849539113},
-{"id":"south-korea","country":"South Korea","latitude":35.9078,"longitude":127.7669,"percent_of_world_gdp":1.865700898,"trade_value_high":537.0795578,"trade_value_low":423.2086169,"percent_of_trade_high":59.55050973,"percent_of_trade_low":46.92468461,"percent_of_gdp_high":38.05712922,"percent_of_gdp_low":29.98830394},
-{"id":"australia","country":"Australia","latitude":-25.2744,"longitude":133.7751,"percent_of_world_gdp":1.59253215,"trade_value_high":166.1975872,"trade_value_low":111.817106,"percent_of_trade_high":42.29788457,"percent_of_trade_low":28.45785624,"percent_of_gdp_high":13.79672248,"percent_of_gdp_low":9.282382536},
-{"id":"indonesia","country":"Indonesia","latitude":-0.7893,"longitude":113.9213,"percent_of_world_gdp":1.232469244,"trade_value_high":273.3914676,"trade_value_low":238.9027074,"percent_of_trade_high":97.75938339,"percent_of_trade_low":85.42688466,"percent_of_gdp_high":29.32569334,"percent_of_gdp_low":25.62621137},
-{"id":"thailand","country":"Thailand","latitude":15.87,"longitude":100.9925,"percent_of_world_gdp":0.537851923,"trade_value_high":341.9632918,"trade_value_low":303.9235134,"percent_of_trade_high":83.48854279,"percent_of_trade_low":74.20133056,"percent_of_gdp_high":84.05357421,"percent_of_gdp_low":74.70350825},
-{"id":"hong-kong","country":"Hong Kong","latitude":22.3964,"longitude":114.1095,"percent_of_world_gdp":0.424253759,"trade_value_high":369.6053012,"trade_value_low":0,"percent_of_trade_high":37.73791545,"percent_of_trade_low":0,"percent_of_gdp_high":115.1733279,"percent_of_gdp_low":0},
-{"id":"phillippines","country":"Philippines","latitude":12.8797,"longitude":121.774,"percent_of_world_gdp":0.403092343,"trade_value_high":133.5442144,"trade_value_low":106.7614854,"percent_of_trade_high":90.22076334,"percent_of_trade_low":72.12669416,"percent_of_gdp_high":43.79857207,"percent_of_gdp_low":35.01462519},
-{"id":"singapore","country":"Singapore","latitude":1.3521,"longitude":103.8198,"percent_of_world_gdp":0.392595874,"trade_value_high":401.7533655,"trade_value_low":0,"percent_of_trade_high":65.61983384,"percent_of_trade_low":0,"percent_of_gdp_high":135.2861118,"percent_of_gdp_low":0},
-{"id":"malaysia","country":"Malaysia","latitude":4.2105,"longitude":101.9758,"percent_of_world_gdp":0.391793943,"trade_value_high":250.4699781,"trade_value_low":212.702462,"percent_of_trade_high":68.5271163,"percent_of_trade_low":58.19414552,"percent_of_gdp_high":84.5156981,"percent_of_gdp_low":71.77186345}]}
+var tradeData = [{"id":"united-states","country":"United States","latlong":"37.0902,-95.7129","percent_of_world_gdp":24.55,"trade_value_high":564.4,"trade_value_low":208.4,"percent_of_trade_high":15.5,"percent_of_trade_low":5.7,"percent_of_gdp_high":3,"percent_of_gdp_low":1.1},
+{"id":"china","country":"China","latlong":"35.8617,104.1954","percent_of_world_gdp":14.81,"trade_value_high":2164.3,"trade_value_low":1471.6,"percent_of_trade_high":58.1,"percent_of_trade_low":39.5,"percent_of_gdp_high":19.3,"percent_of_gdp_low":13.1},
+{"id":"japan","country":"Japan","latlong":"36.2048,138.2529","percent_of_world_gdp":6.53,"trade_value_high":387.5,"trade_value_low":239.5,"percent_of_trade_high":31,"percent_of_trade_low":19.1,"percent_of_gdp_high":7.8,"percent_of_gdp_low":4.8},
+{"id":"india","country":"India","latlong":"23.937761,78.367233","percent_of_world_gdp":2.99,"trade_value_high":214.4,"trade_value_low":189.1,"percent_of_trade_high":34.7,"percent_of_trade_low":30.6,"percent_of_gdp_high":9.5,"percent_of_gdp_low":8.4},
+{"id":"south-korea","country":"South Korea","latlong":"35.9078,127.7669","percent_of_world_gdp":1.87,"trade_value_high":537.1,"trade_value_low":423.2,"percent_of_trade_high":59.6,"percent_of_trade_low":46.9,"percent_of_gdp_high":38.1,"percent_of_gdp_low":30},
+{"id":"australia","country":"Australia","latlong":"-25.2744,133.7751","percent_of_world_gdp":1.59,"trade_value_high":166.2,"trade_value_low":111.8,"percent_of_trade_high":42.3,"percent_of_trade_low":28.5,"percent_of_gdp_high":13.8,"percent_of_gdp_low":9.3},
+{"id":"indonesia","country":"Indonesia","latlong":"-0.7893,113.9213","percent_of_world_gdp":1.23,"trade_value_high":273.4,"trade_value_low":238.9,"percent_of_trade_high":97.8,"percent_of_trade_low":85.4,"percent_of_gdp_high":29.3,"percent_of_gdp_low":25.6},
+{"id":"thailand","country":"Thailand","latlong":"15.87,100.9925","percent_of_world_gdp":0.54,"trade_value_high":342,"trade_value_low":303.9,"percent_of_trade_high":83.5,"percent_of_trade_low":74.2,"percent_of_gdp_high":84.1,"percent_of_gdp_low":74.7},
+{"id":"hong-kong","country":"Hong Kong","latlong":"22.3964,114.1095","percent_of_world_gdp":0.42,"trade_value_high":369.6,"trade_value_low":369.6,"percent_of_trade_high":37.7,"percent_of_trade_low":37.7,"percent_of_gdp_high":115.2,"percent_of_gdp_low":115.2},
+{"id":"phillippines","country":"Philippines","latlong":"12.8797,121.774","percent_of_world_gdp":0.4,"trade_value_high":133.5,"trade_value_low":106.8,"percent_of_trade_high":90.2,"percent_of_trade_low":72.1,"percent_of_gdp_high":43.8,"percent_of_gdp_low":35},
+{"id":"singapore","country":"Singapore","latlong":"1.3521,103.8198","percent_of_world_gdp":0.39,"trade_value_high":401.8,"trade_value_low":401.8,"percent_of_trade_high":65.6,"percent_of_trade_low":65.6,"percent_of_gdp_high":135.3,"percent_of_gdp_low":135.3},
+{"id":"malaysia","country":"Malaysia","latlong":"4.2105,101.9758","percent_of_world_gdp":0.39,"trade_value_high":250.5,"trade_value_low":212.7,"percent_of_trade_high":68.5,"percent_of_trade_low":58.2,"percent_of_gdp_high":84.5,"percent_of_gdp_low":71.8},
+{"id":"sri-lanka","country":"Sri Lanka","latlong":"7.500123,80.781994","percent_of_world_gdp":0.11,"trade_value_high":11.6,"trade_value_low":10.6,"percent_of_trade_high":41.7,"percent_of_trade_low":37.9,"percent_of_gdp_high":14.3,"percent_of_gdp_low":13},
+{"id":"bangladesh","country":"Bangladesh","latlong":"24.051156,90.132755","percent_of_world_gdp":0.29,"trade_value_high":35,"trade_value_low":34.7,"percent_of_trade_high":49,"percent_of_trade_low":48.6,"percent_of_gdp_high":15.8,"percent_of_gdp_low":15.7},
+{"id":"myanmar","country":"Myanmar","latlong":"20.635777,96.558789","percent_of_world_gdp":0.09,"trade_value_high":21.7,"trade_value_low":20.4,"percent_of_trade_high":78.6,"percent_of_trade_low":73.9,"percent_of_gdp_high":32.2,"percent_of_gdp_low":30.3},
+{"id":"vietnam","country":"Vietnam","latlong":"13.240637,108.385145","percent_of_world_gdp":0.27,"trade_value_high":318.4,"trade_value_low":318.4,"percent_of_trade_high":85.6,"percent_of_trade_low":85.6,"percent_of_gdp_high":157.1,"percent_of_gdp_low":157.1},
+{"id":"cambodia","country":"Cambodia","latlong":"12.615995,104.863330","percent_of_world_gdp":0.03,"trade_value_high":26.8,"trade_value_low":26.8,"percent_of_trade_high":116.7,"percent_of_trade_low":116.7,"percent_of_gdp_high":134.1,"percent_of_gdp_low":134.1},
+{"id":"brunei","country":"Brunei","latlong":"4.463794,114.628811","percent_of_world_gdp":0.02,"trade_value_high":5.8,"trade_value_low":5.8,"percent_of_trade_high":76,"percent_of_trade_low":76,"percent_of_gdp_high":50.9,"percent_of_gdp_low":50.9},
+{"id":"taiwan","country":"Taiwan","latlong":"23.714973,120.937792","percent_of_world_gdp":0.7,"trade_value_high":249.1,"trade_value_low":204.8,"percent_of_trade_high":48.8,"percent_of_trade_low":40.1,"percent_of_gdp_high":47,"percent_of_gdp_low":38.7},
+{"id":"timor-leste","country":"Timor-Leste","latlong":"-8.807921,125.933983","percent_of_world_gdp":0,"trade_value_high":0.5,"trade_value_low":0.1,"percent_of_trade_high":81.9,"percent_of_trade_low":23.8,"percent_of_gdp_high":0,"percent_of_gdp_low":0},
+{"id":"new-zealand","country":"New Zealand","latlong":"-42.936100,172.024610","percent_of_world_gdp":0.24,"trade_value_high":20.9,"trade_value_low":12.8,"percent_of_trade_high":29.9,"percent_of_trade_low":18.3,"percent_of_gdp_high":11.3,"percent_of_gdp_low":6.9}]
 
 var bilateralData = [{"origin":"East Asia","destination":"North America","origin-latlong":"33.053667, 107.933937","destination-latlong":"37.639343, -95.796531","high-end":472575638003,"low-end":128946764105},
 {"origin":"East Asia","destination":"South America","origin-latlong":"33.053667, 107.933938","destination-latlong":"-6.229760, -59.765475","high-end":99600436072,"low-end":54471783041},
@@ -67,6 +76,7 @@ var bilateralData = [{"origin":"East Asia","destination":"North America","origin
 {"origin":"Europe","destination":"East Asia","origin-latlong":"49.202424, 16.527689","destination-latlong":"33.053667, 107.933941","high-end":407111081409,"low-end":407111081409},
 {"origin":"South Asia","destination":"East Asia","origin-latlong":"20.539049, 79.281594","destination-latlong":"33.053667, 107.933942","high-end":78230912673,"low-end":65088113515}];
 
+
 // ================================================== //
 // Initialization
 // ================================================== //
@@ -79,62 +89,38 @@ $.getJSON(myGeoJSONPath,function(data){
         style: myCustomStyle
     }).addTo(map);
 
-    // circles = addCircles(map, tradeData.features, displayParameter);initBilateralLayer
-
-    // Bilateral circles map visualization
-    var exports = bilateralData.slice(0, 6).sort(function(a, b){ return b['low-end'] - a['low-end']; });
-    // $('#sm-chart-title').html('Exports from East Asia passing through the South China Sea');
-    circles = initBilateralLayer(map, exports, 'destination-latlong');
+    // Map circles
+    circles = addCircles(map, tradeData, displayParameter);
 
     // Sidebar chart
-    initChart(map, tradeData.features, displayParameter);
-    $('#sm-chart').hide();
+    initChart(map, tradeData);
+    redrawChart(displayParameter);
 
     $('#nav-tab-1 a').click(function(e) {
         e.preventDefault();
-        $('#sm-chart').fadeOut();
-        var exports = bilateralData.slice(0, 6).sort(function(a, b){ return b['low-end'] - a['low-end']; });
-        $('#sm-chart-title').html('Exports from East Asia passing through the South China Sea');
-        // updateChart(map, exports, 'destination');
+        $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('Total trade value through the South China Sea');
+        redrawChart('trade_value_high');
         circles.clearLayers();
-        circles = initBilateralLayer(map, exports, 'destination-latlong');
+        circles = addCircles(map, tradeData, 'trade_value_high');
     });
 
     $('#nav-tab-2 a').click(function(e) {
         e.preventDefault();
-        $('#sm-chart').fadeOut();
-        var exports = bilateralData.slice(6, 12).sort(function(a, b){ return b['low-end'] - a['low-end']; });
-        $('#sm-chart-title').html('Exports to East Asia passing through the South China Sea');
-        // updateChart(map, exports, 'origin');
+        $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('South China Sea Trade as a percentage of all trade');
+        redrawChart('percent_of_trade_high');
         circles.clearLayers();
-        circles = initBilateralLayer(map, exports, 'origin-latlong');
+        circles = addCircles(map, tradeData, 'percent_of_trade_high');
     });
 
     $('#nav-tab-3 a').click(function(e) {
         e.preventDefault();
         $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('Total trade value through the South China Sea');
-        // updateChart(map, tradeData.features, 'trade_value_high');
-        circles.clearLayers();
-        circles = addCircles(map, tradeData.features, 'trade_value_high');
-    });
-
-    $('#nav-tab-4 a').click(function(e) {
-        e.preventDefault();
-        $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('South China Sea Trade as a percentage of all trade');
-        updateChart(map, tradeData.features, 'percent_of_trade_high');
-        circles.clearLayers();
-        circles = addCircles(map, tradeData.features, 'percent_of_trade_high');
-    });
-
-    $('#nav-tab-5 a').click(function(e) {
-        e.preventDefault();
-        $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('South China Sea Trade as a percentage of GDP');
-        updateChart(map, tradeData.features, 'percent_of_gdp_high');
+        redrawChart('percent_of_gdp_high');
         circles.clearLayers();
-        circles = addCircles(map, tradeData.features, 'percent_of_gdp_high');
+        circles = addCircles(map, tradeData, 'percent_of_gdp_high');
     });
 });
 
@@ -153,13 +139,13 @@ function addCircles(map, data, displayParameter) {
 
     switch (displayParameter) {
         case 'trade_value_high':
-            multiplier = 1000;
+            multiplier = 800;
             break;
         case 'percent_of_trade_high':
-            multiplier = 10000;
+            multiplier = 5000;
             break;
         case 'percent_of_gdp_high':
-            multiplier = 10000;
+            multiplier = 4000;
             break;
         default:
             console.log('Error');
@@ -167,9 +153,11 @@ function addCircles(map, data, displayParameter) {
 
     for (var i = 0; i < data.length; i++) {
         var d = data[i];
+        var latitude = d.latlong.split(',')[0];
+        var longitude = d.latlong.split(',')[1];
         var popupMarkup = '<p>'+Math.round(d[displayParameter])+'</p><p>'+d.country+'</p>';
         
-        var circle = new L.circle([d.latitude, d.longitude], {
+        var circle = new L.circle([latitude, longitude], {
             radius: d[displayParameter] * multiplier,
             className: 'overlay-circle'
         });
@@ -200,129 +188,26 @@ function addCircles(map, data, displayParameter) {
 }
 
 
-// Regional bilateral trade map ============================= //
+// Intra-regional trade chart ============================= //
 
-function initBilateralLayer(map, data, latlong) {
-    var c;
-    var circleArray = [];
-    var multiplier = 0.5;
-    var formatPopup = function(t) {
-        return '$' + Math.round(t/1000000000) + ' billion';
-    };
-    var formatCircle = function(c) {
-        return c/500000;
-    }
-
-    var circleOrigin = new L.circle([33.053667, 107.933937], {
-        radius: 100000,
-        className: 'overlay-circle'
-    });
-    circleArray.push(circleOrigin);
-
-    for (var i = 0; i < data.length; i++) {
-        var d = data[i];
-        var latitude = d[latlong].split(',')[0];
-        var longitude = d[latlong].split(',')[1];
-
-        var popupMarkup = '<p>'+formatPopup(d['low-end'])+'</p><p>Origin: '+d.origin+'</p><p>Destination: '+d.destination+'</p>';
-        
-        // Draw a circle
-        var circle = new L.circle([latitude, longitude], {
-            radius: formatCircle(d['low-end']),
-            className: 'overlay-circle'
-        });
-
-        // Draw a line from origin to destination
-        var latlngs = [
-            [d['origin-latlong'].split(',')[0], d['origin-latlong'].split(',')[1]],
-            [d['destination-latlong'].split(',')[0], d['destination-latlong'].split(',')[1]]
-        ];
-        var polyline = L.polyline.antPath(latlngs, {
-            lineCap: 'round',
-            className: 'map-line',
-            dashArray: '5, 7',
-            delay: 1500,
-            opacity: 1,
-            weight: 2,
-            pulseColor: '#3E77B9'
-        });
-
-        circle.bindPopup(popupMarkup);
-        circle.on('mouseover', function (e) {
-            // triggerBilateralMouseover(this.data.id);
-            this.openPopup();
-            $(this._path).addClass('active');
-        });
-        circle.on('mouseout', function (e) {
-            // triggerBilateralMouseout(this.data.id);
-            this.closePopup();
-            $(this._path).removeClass('active');
-        });
-
-        circleArray.push(circle, polyline);
-    };
-    
-    c = L.layerGroup(circleArray).addTo(map);
-    // zoom the map to the polyline
-    // map.fitBounds(c.getBounds());
-    return c;
-}
-
-function initChart(map, data, displayParameter) {
+function initChart(map, data) {
     // Sort the data in descending order
-    data.sort(function(a, b){
-        return b[displayParameter] - a[displayParameter];
-    });
+    // data.sort(function(a, b){
+    //     return b[displayParameter] - a[displayParameter];
+    // });
 
-    sidebarWidth = $('#sm-chart').width();
+    // sidebarWidth = $('#sm-chart').width();
 
-    var x = d3.scaleLinear()
-        .domain([0, data[0][displayParameter] ])
-        .range([0, sidebarWidth - sidebarPadding - 80]);
+    // var x = d3.scaleLinear()
+    //     .domain([0, data[0][displayParameter] ])
+    //     .range([0, sidebarWidth - sidebarPadding - 80]);
 
     svgChart = d3.select('#sm-chart')
         .append('svg')
             .attr('width', 400)
             .attr('height', 300);
-
-    var bar = svgChart.selectAll("g")
-        .data(tradeData.features)
-        .enter().append("g")
-        .attr("transform", function(d, i) {
-            return "translate(0," + i * barWidth + ")";
-        });
-
-    bar.append("text")
-        .attr("x", 0)
-        .attr("y", barWidth / 2)
-        .attr("dy", ".35em")
-        .text(function(d) { return d['country']; });
-
-    bar.append("rect")
-        .attr("width", function(d) {
-            return x(d[displayParameter]); // length of each bar
-        })
-        .attr("height", barWidth - 1)
-        .attr('fill', '#3E77B9')
-        .attr("transform", function(d, i) {
-            return "translate(" + 80 + ",0)";
-        })
-        .attr('id', function(d) {
-            return d['id'] // Attach a country id to each bar to access via map
-        })
-        .on("mouseover", triggerBarMouseover)
-        .on("mouseout", triggerBarMouseout);
-
-    bar.append("text")
-        .attr("x", 5)
-        .attr("y", barWidth / 2)
-        .attr("dy", ".35em")
-        .attr('class', 'bar-label')
-        .text(function(d) { return Math.round(d[displayParameter]); })
-        .attr("transform", function(d, i) {
-            return "translate(" + 80 + ",0)";
-        });
 }
+
 
 // ================================================== //
 // Event handlers
@@ -358,39 +243,72 @@ function initChart(map, data, displayParameter) {
 //   redraw(); // CREATE REDRAW FUNCTION TO UPDATE CHART
 // });
 
-function updateChart(map, data, displayParameter) {
-    // Sort the data in descending order
-    data.sort(function(a, b){
-        return b[displayParameter] - a[displayParameter];
-    });
+function redrawChart(parameter) {
+    // Sort the data in descending order and get top 10
+    var top = tradeData.sort(function(a, b) { return b[parameter] - a[parameter]; }).slice(0, 10);
+    var sidebarWidth = $('#sm-chart').width();
 
-    sidebarWidth = $('#sm-chart').width();
-
+    // Define the domain
     var x = d3.scaleLinear()
-        .domain([0, data[0][displayParameter] ])
+        .domain([0, top[0][parameter] ])
         .range([0, sidebarWidth - sidebarPadding - 80]);
+    
+    var t = d3.transition()
+        .duration(750);
 
-    var bar = svgChart.selectAll("g")
-        .attr("transform", function(d, i) {
-            return "translate(0," + i * barWidth + ")";
-        });
+    // BIND bar elements to data
+    var bar = svgChart.selectAll(".bar")
+        .data(top);
 
-    bar.selectAll('rect')
-        .transition()
-        .duration(500)
+    // EXIT old elements not present in new data
+    bar.exit()
+        // .transition(t)
+        // .style("opacity", 0)
+        .remove();
+
+    // UPDATE old elements present in new data
+    bar.select("rect")
+        .transition(t)
         .attr("width", function(d) {
-            return x(d[displayParameter]); // length of each bar
+            return x(d[parameter]); // length of each bar
         });
+    bar.select(".label")
+        .text(function(d) { return d['country']; });
+    bar.select(".value")
+        .text(function(d) { return Math.round(d[parameter]); });
 
-    bar.selectAll('.bar-label')
-        .text(function(d) { return Math.round(d[displayParameter]); });
+    // ENTER new elements present in new data
+    var barEnter = bar.enter().append("g")
+        .attr("class", "bar")
+        .attr("transform", function(d, i) {
+            return "translate(80," + i * barWidth + ")"; // NOTE: Improve how we y position?
+        })
+        .attr('id', function(d) { // NOTE: Better way to activate bars from map circles?
+            return d['id'] // Attach a country id to each bar to access via map
+        })
+        .on("mouseover", triggerBarMouseover)
+        .on("mouseout", triggerBarMouseout);
+    
+    barEnter.append("rect")
+        .attr("width", function(d) {
+            return x(d[parameter]); // length of each bar
+        })
+        .attr("height", barWidth - 1);
 
-    // Update map
-    // $.each(circles, function(index, country) {
-    //     console.log( country );
-    //     // country.radius = data[displayParameter] * 1000;
-    //     country.setStyle({fill: "#EA3B33"});
-    // });
+    barEnter.append("text")
+        .attr("class", "label")
+        .attr("x", -5)
+        .attr("y", barWidth / 2)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "end")
+        .text(function(d) { return d['country']; });
+
+    barEnter.append("text")
+        .attr("class", "value")
+        .attr("x", 5)
+        .attr("y", barWidth / 2)
+        .attr("dy", ".35em")
+        .text(function(d) { return Math.round(d[parameter]); });
 }
 
 function triggerCircleMouseover(id) {
@@ -407,17 +325,90 @@ function triggerBarMouseover(d, i) {
     var c = circlesObj[d.country];
     c.openPopup();
     $(c._path).addClass('active');
-    d3.select(this)
-        .attr("fill", "#EA3B33");
 }
 
 function triggerBarMouseout(d, i) {
     var c = circlesObj[d.country];
     c.closePopup();
     $(c._path).removeClass('active');
-    d3.select(this)
-        .attr("fill", '#3E77B9');
 }
+
+
+
+
+
+
+
+
+
+
+// Bilateral trade map ============================= //
+
+// function initBilateralLayer(map, data, latlong) {
+//     var c;
+//     var circleArray = [];
+//     var multiplier = 0.5;
+//     var formatPopup = function(t) {
+//         return '$' + Math.round(t/1000000000) + ' billion';
+//     };
+//     var formatCircle = function(c) {
+//         return c/500000;
+//     }
+
+//     var circleOrigin = new L.circle([33.053667, 107.933937], {
+//         radius: 100000,
+//         className: 'overlay-circle'
+//     });
+//     circleArray.push(circleOrigin);
+
+//     for (var i = 0; i < data.length; i++) {
+//         var d = data[i];
+//         var latitude = d[latlong].split(',')[0];
+//         var longitude = d[latlong].split(',')[1];
+
+//         var popupMarkup = '<p>'+formatPopup(d['low-end'])+'</p><p>Origin: '+d.origin+'</p><p>Destination: '+d.destination+'</p>';
+        
+//         // Draw a circle
+//         var circle = new L.circle([latitude, longitude], {
+//             radius: formatCircle(d['low-end']),
+//             className: 'overlay-circle'
+//         });
+
+//         // Draw a line from origin to destination
+//         var latlngs = [
+//             [d['origin-latlong'].split(',')[0], d['origin-latlong'].split(',')[1]],
+//             [d['destination-latlong'].split(',')[0], d['destination-latlong'].split(',')[1]]
+//         ];
+//         var polyline = L.polyline.antPath(latlngs, {
+//             lineCap: 'round',
+//             className: 'map-line',
+//             dashArray: '5, 7',
+//             delay: 1500,
+//             opacity: 1,
+//             weight: 2,
+//             pulseColor: '#3E77B9'
+//         });
+
+//         circle.bindPopup(popupMarkup);
+//         circle.on('mouseover', function (e) {
+//             // triggerBilateralMouseover(this.data.id);
+//             this.openPopup();
+//             $(this._path).addClass('active');
+//         });
+//         circle.on('mouseout', function (e) {
+//             // triggerBilateralMouseout(this.data.id);
+//             this.closePopup();
+//             $(this._path).removeClass('active');
+//         });
+
+//         circleArray.push(circle, polyline);
+//     };
+    
+//     c = L.layerGroup(circleArray).addTo(map);
+//     // zoom the map to the polyline
+//     // map.fitBounds(c.getBounds());
+//     return c;
+// }
 
 
 

@@ -152,18 +152,23 @@ a:hover {
     width: 100%;
 }
 
-#sm-chart rect {
-    /*fill: #3E77B9;*/
+.bar rect {
+    fill: #3E77B9;
 }
 
-#sm-chart text {
+.bar:hover rect {
+    fill: #EA3B33;
+}
+
+.bar .label {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
     fill: #000;
     font-size: 12px;
 }
 
-#sm-chart .bar-label {
+.bar .value {
     fill: #fff;
+    font-size: 12px;
     pointer-events: none;
 }
 
