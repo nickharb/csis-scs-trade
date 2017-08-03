@@ -130,6 +130,11 @@ a:hover {
     margin-bottom: 20px;
 }*/
 
+#sm-year-menu h3,
+#sm-year-menu select {
+    display: inline-block;
+}
+
 
 /* ================================================== */
 /* Sidebar

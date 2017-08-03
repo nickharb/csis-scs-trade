@@ -4,7 +4,7 @@
 
 // Parameters
 var parameter = 'scs_exports'; // Set initial display parameter
-var year = 2016 // Set initial year
+var year = 2016; // Set initial year
 var ratData = [400, 900, 300, 600];
 var newData = [800, 200, 400, 500, 100];
 var barWidth = 20;
@@ -13,6 +13,8 @@ var sidebarPadding = 10;
 var marginLeft = 90;
 
 // Global variables
+var menu;
+var tradeData;
 var circles;
 var circlesObj;
 var svgChart;
@@ -81,12 +83,14 @@ $.getJSON('data/world.geo.json' ,function(data){
     map.scrollWheelZoom.disable()
 
     // Import trade data
-    d3.csv('data/scs-trade.csv', function(data) {
+    d3.csv('data/scs-trade-2.csv', function(data) {
 
         // Convert percentage strings into float numbers
         data.forEach(function(datum) {
             datum['scs_trade_percent_total_trade'] = parseFloat(datum['scs_trade_percent_total_trade']);
         });
+
+        tradeData = data;
 
         // menu.selectAll("option") // Add options to menu
         //     .data(ages)
@@ -96,11 +100,13 @@ $.getJSON('data/world.geo.json' ,function(data){
         // menu.property("value", "18 to 24 Years"); // Set current option
 
         initEventHandlers(data);
-
-        // // Draw map circles and charts
-        circles = addCircles(map, data, parameter); // Map circles
-        initChart(map, data); // Sidebar chart
-        redrawChart(data, parameter); // Call redraw
+        initChart(); // Sidebar chart
+        
+        // First map/chart draw
+        var parsed = _.filter(tradeData, function(item){ return item['year'] == year; });
+        // Draw map circles and charts
+        circles = addCircles(map, parsed, parameter); // Map circles
+        redrawChart(parsed, parameter); // Call redraw
     });
 });
 
@@ -108,6 +114,15 @@ $.getJSON('data/world.geo.json' ,function(data){
 // ================================================== //
 // Chart constructors
 // ================================================== //
+
+function update() {
+    year = menu.property("value"); // Update current year
+    var data = _.filter(tradeData, function(item){ return item['year'] == year; });
+    // Draw map circles and charts
+    circles.clearLayers();
+    circles = addCircles(map, data, parameter); // Map circles
+    redrawChart(data, parameter); // Call redraw
+}
 
 // Intra-regional trade map ============================= //
 
@@ -148,7 +163,7 @@ function addCircles(map, data, parameter) {
 
         popupMarkup = '<p>'+format(d[parameter])+'</p><p>'+d.country+'</p>';
         
-        if (Math.round(parseFloat(d[parameter])) !== 0) {
+        // if (Math.round(parseFloat(d[parameter])) !== 0) {
             var circle = new L.circle([latitude, longitude], {
                 radius: radius,
                 className: 'overlay-circle'
@@ -172,7 +187,7 @@ function addCircles(map, data, parameter) {
             circleArray.push(circle);
 
             c[d.country] = circle;
-        }
+        // }
     };
     circlesObj = c;
     c = L.layerGroup(circleArray).addTo(map);
@@ -182,7 +197,7 @@ function addCircles(map, data, parameter) {
 
 // Intra-regional trade chart ============================= //
 
-function initChart(map, data) {
+function initChart() {
     // Sort the data in descending order
     // data.sort(function(a, b){
     //     return b[parameter] - a[parameter];
@@ -206,8 +221,8 @@ function initChart(map, data) {
 // ================================================== //
 
 function initEventHandlers(data) {
-    // var menu = d3.select("#menu select")
-    //     .on("change", change);
+    menu = d3.select("#sm-year-menu select")
+        .on("change", update);
 
     $('#nav-tab-1 a').click(function(e) {
         e.preventDefault();
@@ -217,9 +232,10 @@ function initEventHandlers(data) {
         // $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('Exports Through the SCS (billions)');
         $('#sm-chart-subtitle').html('Top ten exporters');
-        redrawChart(data, parameter);
-        circles.clearLayers();
-        circles = addCircles(map, data, parameter);
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
     });
 
     $('#nav-tab-2 a').click(function(e) {
@@ -230,9 +246,10 @@ function initEventHandlers(data) {
         // $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('Imports Through the SCS (billions)');
         $('#sm-chart-subtitle').html('Top ten importers');
-        redrawChart(data, parameter);
-        circles.clearLayers();
-        circles = addCircles(map, data, parameter);
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
     });
 
     $('#nav-tab-3 a').click(function(e) {
@@ -243,14 +260,11 @@ function initEventHandlers(data) {
         $('#sm-chart').fadeIn();
         $('#sm-chart-title').html('SCS trade as % of All Trade');
         $('#sm-chart-subtitle').html('Top ten economies');
-        redrawChart(data, parameter);
-        circles.clearLayers();
-        circles = addCircles(map, data, parameter);
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
     });
-}
-
-function update() {
-    //
 }
 
 function redrawChart(data, parameter) {
