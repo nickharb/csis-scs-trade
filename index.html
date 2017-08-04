@@ -1,9 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
-    <title>CSIS SCS Trade</title>
+    <title>Putting a Price on the South China Sea</title>
     <meta name="viewport" content="width=device-width">
 
+    <link href="css/vendor/normalize.css" rel="stylesheet" type="text/css"/>
     <link href="css/vendor/leaflet.css" rel="stylesheet" type="text/css"/>
     <link href="css/styles.css" rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href="http://favicon.cargocollective.com/favicon.ico">
@@ -17,9 +18,9 @@
             </div>
             <div class="sm-main-nav">
                 <ul class="sm-nav-tabs">
-                    <li id="nav-tab-1"><a href="#tab-1" class="active">South China Sea Exports</a></li>
-                    <li id="nav-tab-2"><a href="#tab-2">South China Sea Imports</a></li>
-                    <li id="nav-tab-3"><a href="#tab-3">Percentage of All Trade</a></li>
+                    <li id="nav-tab-1"><a href="#tab-1" class="active"><p>01</p><h4>South China Sea Exports</h4></a></li>
+                    <li id="nav-tab-2"><a href="#tab-2"><p>02</p><h4>South China Sea Imports</h4></a></li>
+                    <li id="nav-tab-3"><a href="#tab-3"><p>03</p><h4>Percentage of All Trade</h4></a></li>
                 </ul>
             </div>
         </div>
@@ -27,7 +28,7 @@
         <div class="sm-sidebar-container">
             <div class="sm-sidebar">
                 <div class="sm-sidebar-header" id="sm-display-sidebar-header">
-                    <h2>Global South China Sea Trade</h2>
+                    <h2>Global Trade Through the South China Sea</h2>
                     <div id="sm-year-menu">
                         <h3>Year:</h3>
                         <select>
@@ -44,10 +45,10 @@
                     </div>
                     <!-- <h3>Year: 2016</h3> -->
                 </div>
-                <h3 class="sm-display-figure"><span class="sm-dollar-sign">$</span><span id="sm-display-number">3.4</span> trillion</h3>
+                <h3 class="sm-display-figure"><span class="sm-dollar-sign">$</span><span id="sm-display-number">3.37</span> trillion</h3>
             </div>
 
-            <div class="sm-sidebar">
+            <!-- <div class="sm-sidebar">
                 <div class="sm-sidebar-header">
                     <h2>Region-to-Region Trade</h2>
                     <h3>Top five regional trade pairs</h3>
@@ -84,7 +85,7 @@
                         <td>6%</td>
                     </tr>
                 </table>
-            </div>
+            </div> -->
 
             <div class="sm-sidebar">
                 <div class="sm-sidebar-header">
@@ -100,7 +101,9 @@
             </div>
         </div>
         
-        <div id="sm-map"></div>
+        <div id="sm-map">
+            <div class="sm-branding"></div>
+        </div>
     </div>
 
     <script src="js/vendor/jquery-3.2.1.min.js"></script>

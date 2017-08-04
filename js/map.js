@@ -7,22 +7,24 @@ var parameter = 'scs_exports'; // Set initial display parameter
 var year = 2016; // Set initial year
 var ratData = [400, 900, 300, 600];
 var newData = [800, 200, 400, 500, 100];
-var barWidth = 20;
-var barSpacing = 10;
+var barWidth = 25;
+var barSpacing = 5;
 var sidebarPadding = 10;
 var marginLeft = 90;
 
 // Global variables
 var menu;
 var tradeData;
+var topTenData;
 var circles;
 var circlesObj;
 var svgChart;
 
-var map = L.map('sm-map').setView([35.707445, 8.979712], 2); // Whole Earth view
+var map = L.map('sm-map').setView([18.960952, 66.514002], 3); // Eurasia view
+// var map = L.map('sm-map').setView([35.707445, 8.979712], 2); // Whole Earth view
 // var map = L.map('sm-map').setView([18.4438, 110.8517], 4); // SCS view
 
-mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+// mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 
 // L.tileLayer(
 // 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -40,20 +42,19 @@ mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 var myCustomStyle = {
     stroke: true,
     color: '#f0f0f0',
-    weight: 2
-}
+    weight: 1.5
+};
 
-var topEconomies = [
-    "United States",
-    "China",
-    "Japan",
-    "Germany",
-    "United Kingdom",
-    "France",
-    "India",
-    "Italy",
-    "Brazil",
-    "Canada"
+var globalTrade = [
+    {"year": "2016", "trade": 3.37},
+    {"year": "2015", "trade": 3.26},
+    {"year": "2014", "trade": 3.70},
+    {"year": "2013", "trade": 3.60},
+    {"year": "2012", "trade": 3.51},
+    {"year": "2011", "trade": 3.38},
+    {"year": "2010", "trade": 2.80},
+    {"year": "2009", "trade": 2.11},
+    {"year": "2008", "trade": 2.61}
 ];
 
 var bilateralData = [{"origin":"East Asia","destination":"North America","origin-latlong":"33.053667, 107.933937","destination-latlong":"37.639343, -95.796531","high-end":472575638003,"low-end":128946764105},
@@ -75,38 +76,50 @@ var bilateralData = [{"origin":"East Asia","destination":"North America","origin
 // ================================================== //
 
 $.getJSON('data/world.geo.json' ,function(data){
+    var corner1 = L.latLng(90, -180);
+    var corner2 = L.latLng(-65, 180);
+    var bounds = L.latLngBounds(corner1, corner2);
+    
+    // Create geoJson layer
     L.geoJson(data, {
         clickable: false,
         style: myCustomStyle
     }).addTo(map);
 
-    map.scrollWheelZoom.disable()
+    // Set map bounds and disable scroll zoom
+    map.setMaxBounds(bounds);
+    map.scrollWheelZoom.disable();
+    map.setMinZoom(2)
+    map.setMaxZoom(4)
 
     // Import trade data
-    d3.csv('data/scs-trade-2.csv', function(data) {
+    d3.csv('data/scs-trade.csv', function(data) {
+        d3.csv('data/top-ten.csv', function(dataTop) {
 
-        // Convert percentage strings into float numbers
-        data.forEach(function(datum) {
-            datum['scs_trade_percent_total_trade'] = parseFloat(datum['scs_trade_percent_total_trade']);
+            // Convert percentage strings into float numbers
+            data.forEach(function(datum) {
+                datum['scs_trade_percent_total_trade'] = parseFloat(datum['scs_trade_percent_total_trade']);
+            });
+
+            topTenData = dataTop;
+            tradeData = data;
+
+            // menu.selectAll("option") // Add options to menu
+            //     .data(ages)
+            //     .enter().append("option")
+            //     .text(function(d) { return d; });
+
+            // menu.property("value", "18 to 24 Years"); // Set current option
+
+            initEventHandlers(data);
+            initChart(); // Sidebar chart
+            
+            // First map/chart draw
+            var parsed = _.filter(tradeData, function(item){ return item['year'] == year; });
+            // Draw map circles and charts
+            circles = addCircles(map, parsed, parameter); // Map circles
+            redrawChart(parsed, parameter); // Call redraw
         });
-
-        tradeData = data;
-
-        // menu.selectAll("option") // Add options to menu
-        //     .data(ages)
-        //     .enter().append("option")
-        //     .text(function(d) { return d; });
-
-        // menu.property("value", "18 to 24 Years"); // Set current option
-
-        initEventHandlers(data);
-        initChart(); // Sidebar chart
-        
-        // First map/chart draw
-        var parsed = _.filter(tradeData, function(item){ return item['year'] == year; });
-        // Draw map circles and charts
-        circles = addCircles(map, parsed, parameter); // Map circles
-        redrawChart(parsed, parameter); // Call redraw
     });
 });
 
@@ -118,6 +131,12 @@ $.getJSON('data/world.geo.json' ,function(data){
 function update() {
     year = menu.property("value"); // Update current year
     var data = _.filter(tradeData, function(item){ return item['year'] == year; });
+    var global = _.filter(globalTrade, function(item){ return item['year'] == year; });
+    // var bilateral = _.filter(bilateralTrade, function(item){ return item['year'] == year; });
+    // Update global trade figure
+    $('#sm-display-number').html(Math.round10(global[0]['trade'], -2));
+    // Update table
+    // redrawTable(bilateral);
     // Draw map circles and charts
     circles.clearLayers();
     circles = addCircles(map, data, parameter); // Map circles
@@ -153,17 +172,31 @@ function addCircles(map, data, parameter) {
             return p;
         }
     }
+    var circleCheck = function(d) {
+        var result;
+        if (parameter == 'scs_trade_percent_total_trade') {
+            if (Math.round(parseFloat(d)) > 0) { result = true; }
+        } else {
+            if (Math.round(d/1000000000) >= 1) { result = true; }
+        }
+        return result;
+    };
 
     for (var i = 0; i < data.length; i++) {
         var d = data[i];
         var latitude = d.latitude;
         var longitude = d.longitude;
+        if (d['country'] == 'European Union') {
+            latitude = 52.818188;
+            longitude = 12.227512;
+        }
         var multiplier = (parameter == 'scs_trade_percent_total_trade') ? 70000 : 2;
         var radius = Math.sqrt(parseFloat(d[parameter])/Math.PI)*multiplier;
 
         popupMarkup = '<p>'+format(d[parameter])+'</p><p>'+d.country+'</p>';
         
-        // if (Math.round(parseFloat(d[parameter])) !== 0) {
+        // Check if datum is a number that isn't zero
+        if (!isNaN(d[parameter]) && circleCheck(d[parameter])) {
             var circle = new L.circle([latitude, longitude], {
                 radius: radius,
                 className: 'overlay-circle'
@@ -187,7 +220,7 @@ function addCircles(map, data, parameter) {
             circleArray.push(circle);
 
             c[d.country] = circle;
-        // }
+        }
     };
     circlesObj = c;
     c = L.layerGroup(circleArray).addTo(map);
@@ -197,83 +230,33 @@ function addCircles(map, data, parameter) {
 
 // Intra-regional trade chart ============================= //
 
+// function redrawTable(data) {
+//     var tableRow = $('#sm-table tr');
+//     for (var i = data.length - 1; i >= 0; i--) {
+//         data[i][]
+//     };
+// }
+
 function initChart() {
-    // Sort the data in descending order
-    // data.sort(function(a, b){
-    //     return b[parameter] - a[parameter];
-    // });
-
-    // sidebarWidth = $('#sm-chart').width();
-
-    // var x = d3.scaleLinear()
-    //     .domain([0, data[0][parameter] ])
-    //     .range([0, sidebarWidth - sidebarPadding - 80]);
-
+    var sidebarWidth = $('#sm-chart').width();
     svgChart = d3.select('#sm-chart')
         .append('svg')
-            .attr('width', 400)
+            .attr('width', sidebarWidth)
             .attr('height', 300);
-}
-
-
-// ================================================== //
-// Event handlers
-// ================================================== //
-
-function initEventHandlers(data) {
-    menu = d3.select("#sm-year-menu select")
-        .on("change", update);
-
-    $('#nav-tab-1 a').click(function(e) {
-        e.preventDefault();
-        parameter = 'scs_exports';
-        $('.sm-nav-tabs a').removeClass('active');
-        $(this).addClass('active');
-        // $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('Exports Through the SCS (billions)');
-        $('#sm-chart-subtitle').html('Top ten exporters');
-        // redrawChart(data, parameter);
-        // circles.clearLayers();
-        // circles = addCircles(map, data, parameter);
-        update();
-    });
-
-    $('#nav-tab-2 a').click(function(e) {
-        e.preventDefault();
-        parameter = 'scs_imports';
-        $('.sm-nav-tabs a').removeClass('active');
-        $(this).addClass('active');
-        // $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('Imports Through the SCS (billions)');
-        $('#sm-chart-subtitle').html('Top ten importers');
-        // redrawChart(data, parameter);
-        // circles.clearLayers();
-        // circles = addCircles(map, data, parameter);
-        update();
-    });
-
-    $('#nav-tab-3 a').click(function(e) {
-        e.preventDefault();
-        parameter = 'scs_trade_percent_total_trade';
-        $('.sm-nav-tabs a').removeClass('active');
-        $(this).addClass('active');
-        $('#sm-chart').fadeIn();
-        $('#sm-chart-title').html('SCS trade as % of All Trade');
-        $('#sm-chart-subtitle').html('Top ten economies');
-        // redrawChart(data, parameter);
-        // circles.clearLayers();
-        // circles = addCircles(map, data, parameter);
-        update();
-    });
 }
 
 function redrawChart(data, parameter) {
     // Sort the data in descending order and get top 10
     var top = [];
     if (parameter == 'scs_trade_percent_total_trade') {
+        var topCountries = [];
+        var topEconomies = _.filter(topTenData, function(item){ return item['year'] == year; });
+        for (var i = 0; i < topEconomies.length; i++) {
+            topCountries.push(topEconomies[i]['country']);
+        };
         var t = data.sort(function(a, b) { return b[parameter] - a[parameter]; });
         for (var i = 0; i < t.length; i++) {
-            if (_.contains(topEconomies, t[i]['country']))
+            if (_.contains(topCountries, t[i]['country']))
             top.push(t[i]);
         };
     } else {
@@ -331,7 +314,7 @@ function redrawChart(data, parameter) {
     var barEnter = bar.enter().append("g")
         .attr("class", "bar")
         .attr("transform", function(d, i) {
-            return "translate("+marginLeft+"," + i * barWidth + ")"; // NOTE: Improve how we y position?
+            return "translate("+marginLeft+"," + i * (barWidth+barSpacing) + ")"; // NOTE: Improve how we y position?
         })
         .on("mouseover", triggerBarMouseover)
         .on("mouseout", triggerBarMouseout);
@@ -361,6 +344,58 @@ function redrawChart(data, parameter) {
         .text(function(d) { return format(parseFloat(d[parameter])); });
 }
 
+
+// ================================================== //
+// Event handlers
+// ================================================== //
+
+function initEventHandlers(data) {
+    menu = d3.select("#sm-year-menu select")
+        .on("change", update);
+
+    $('#nav-tab-1 a').click(function(e) {
+        e.preventDefault();
+        parameter = 'scs_exports';
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
+        // $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('Exports Through the SCS (billions)');
+        $('#sm-chart-subtitle').html('Top ten exporters');
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
+    });
+
+    $('#nav-tab-2 a').click(function(e) {
+        e.preventDefault();
+        parameter = 'scs_imports';
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
+        // $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('Imports Through the SCS (billions)');
+        $('#sm-chart-subtitle').html('Top ten importers');
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
+    });
+
+    $('#nav-tab-3 a').click(function(e) {
+        e.preventDefault();
+        parameter = 'scs_trade_percent_total_trade';
+        $('.sm-nav-tabs a').removeClass('active');
+        $(this).addClass('active');
+        $('#sm-chart').fadeIn();
+        $('#sm-chart-title').html('SCS trade as % of All Trade');
+        $('#sm-chart-subtitle').html('Top ten SCS trade economies');
+        // redrawChart(data, parameter);
+        // circles.clearLayers();
+        // circles = addCircles(map, data, parameter);
+        update();
+    });
+}
+
 function triggerCircleMouseover(id) {
     $('#'+id).addClass('active');
 }
@@ -382,82 +417,39 @@ function triggerBarMouseout(d, i) {
 }
 
 
+// ================================================== //
+// Helper functions
+// ================================================== //
 
+function decimalAdjust(type, value, exp) {
+    // If the exp is undefined or zero...
+    if (typeof exp === 'undefined' || +exp === 0) {
+    return Math[type](value);
+    }
+    value = +value;
+    exp = +exp;
+    // If the value is not a number or the exp is not an integer...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+    return NaN;
+    }
+    // If the value is negative...
+    if (value < 0) {
+    return -decimalAdjust(type, -value, exp);
+    }
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+}
 
-
-
-
-
-
-
-
-// Bilateral trade map ============================= //
-
-// function initBilateralLayer(map, data, latlong) {
-//     var c;
-//     var circleArray = [];
-//     var multiplier = 0.5;
-//     var formatPopup = function(t) {
-//         return '$' + Math.round(t/1000000000) + ' billion';
-//     };
-//     var formatCircle = function(c) {
-//         return c/500000;
-//     }
-
-//     var circleOrigin = new L.circle([33.053667, 107.933937], {
-//         radius: 100000,
-//         className: 'overlay-circle'
-//     });
-//     circleArray.push(circleOrigin);
-
-//     for (var i = 0; i < data.length; i++) {
-//         var d = data[i];
-//         var latitude = d[latlong].split(',')[0];
-//         var longitude = d[latlong].split(',')[1];
-
-//         var popupMarkup = '<p>'+formatPopup(d['low-end'])+'</p><p>Origin: '+d.origin+'</p><p>Destination: '+d.destination+'</p>';
-        
-//         // Draw a circle
-//         var circle = new L.circle([latitude, longitude], {
-//             radius: formatCircle(d['low-end']),
-//             className: 'overlay-circle'
-//         });
-
-//         // Draw a line from origin to destination
-//         var latlngs = [
-//             [d['origin-latlong'].split(',')[0], d['origin-latlong'].split(',')[1]],
-//             [d['destination-latlong'].split(',')[0], d['destination-latlong'].split(',')[1]]
-//         ];
-//         var polyline = L.polyline.antPath(latlngs, {
-//             lineCap: 'round',
-//             className: 'map-line',
-//             dashArray: '5, 7',
-//             delay: 1500,
-//             opacity: 1,
-//             weight: 2,
-//             pulseColor: '#3E77B9'
-//         });
-
-//         circle.bindPopup(popupMarkup);
-//         circle.on('mouseover', function (e) {
-//             // triggerBilateralMouseover(this.data.id);
-//             this.openPopup();
-//             $(this._path).addClass('active');
-//         });
-//         circle.on('mouseout', function (e) {
-//             // triggerBilateralMouseout(this.data.id);
-//             this.closePopup();
-//             $(this._path).removeClass('active');
-//         });
-
-//         circleArray.push(circle, polyline);
-//     };
-    
-//     c = L.layerGroup(circleArray).addTo(map);
-//     // zoom the map to the polyline
-//     // map.fitBounds(c.getBounds());
-//     return c;
-// }
+// Decimal round
+if (!Math.round10) {
+    Math.round10 = function(value, exp) {
+        return decimalAdjust('round', value, exp);
+    };
+}
 
 
 
