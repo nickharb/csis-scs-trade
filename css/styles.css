@@ -171,12 +171,14 @@ a:hover {
 
 #sm-year-menu h3 {
     display: inline-block;
-    color: #455A64;
+    /*color: #455A64;*/
+    color: #728C99;
 
     text-transform: uppercase;
     font-weight: bold;
     padding-right: 5px;
     letter-spacing: 1px;
+    font-size: 16px;
 }
 
 #sm-year-menu select {
@@ -220,21 +222,26 @@ a:hover {
 
 .sm-sidebar-container {
     background: #fff;
-    /*border-top: 2px solid #eee;*/
     z-index: 900;
     height: 100%;
-    width: 33.333%;
+    width: 30%;
     /*max-width: 400px;*/
     position: absolute;
     right: 0;
     padding-top: 5px;
 }
 
+@media (max-width: 1000px) {
+    .sm-sidebar-container {
+        width: 40%;
+    }
+}
+
 .sm-sidebar {
     background: #fff;
     padding: 20px 0;
     margin: 0 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #eee;
     /*margin-top: 20px;*/
 }
 
@@ -353,10 +360,14 @@ a:hover {
 /* ================================================== */
 
 #sm-map {
-    /*position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;*/
     height: 100%;
-    width: 66.666%;
+    width: 70%;
+}
+
+@media (max-width: 1000px) {
+    #sm-map {
+        width: 60%;
+    }
 }
 
 .leaflet-container {
@@ -399,19 +410,48 @@ path.map-line {
     pointer-events: none;
 }
 
-.leaflet-popup p {
+.leaflet-popup h1 {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #263D45;
-    margin: 0 !important;
-    padding: 0 !important;
+    color: #728C99;
+    margin: 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
 }
 
-.leaflet-popup p:first-of-type {
+.leaflet-popup h2 {
     font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #263D45;
-    font-size: 18px;
+    color: #0A4360;
+    font-size: 26px;
     font-weight: bold;
-    color: #333;
+    margin: 0;
+    line-height: 1em;
+}
+
+.leaflet-popup h3 {
+    font-family: "Hind", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #777;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.popup-bar {
+    height: 5px;
+    width: 100%;
+    background-color: #f0f0f0;
+    margin-top: 10px;
+    margin-bottom: 2px;
+}
+
+.popup-bar-inner {
+    height: 5px;
+    background-color: #EA3B33;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 2px;
+    border: 2px solid #0A4360;
 }
 
 .leaflet-popup-tip-container,

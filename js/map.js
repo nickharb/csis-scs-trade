@@ -167,7 +167,7 @@ function addCircles(map, data, parameter) {
             if (t < 1) {
                 p = 'Less than $1 billion';
             } else {
-                p = '$' + t + ' billion';
+                p = '$' + numberWithCommas(t) + ' billion';
             }
             return p;
         }
@@ -192,8 +192,12 @@ function addCircles(map, data, parameter) {
         }
         var multiplier = (parameter == 'scs_trade_percent_total_trade') ? 70000 : 2;
         var radius = Math.sqrt(parseFloat(d[parameter])/Math.PI)*multiplier;
-
-        popupMarkup = '<p>'+format(d[parameter])+'</p><p>'+d.country+'</p>';
+        var scsPercent = (parameter == 'scs_exports') ? 'exports_percent_of_total_scs' : 'imports_percent_of_total_scs';
+        var scsPercentText = (parameter == 'scs_exports') ? 'exports' : 'imports';
+        var popupSCSPercent = (parameter != 'scs_trade_percent_total_trade' && Math.round(parseFloat(d[scsPercent])) > 0) ? '<div class="popup-bar"><div class="popup-bar-inner" style="width:'+Math.round(parseFloat(d[scsPercent]))+'%;"></div></div><h3>'+Math.round(parseFloat(d[scsPercent]))+'% of total SCS '+scsPercentText+'</h3>' : '';
+        
+        popupMarkup = '<h1>'+d.country+'</h1>' +
+                      '<h2>'+format(d[parameter])+'</h2>' + popupSCSPercent;
         
         // Check if datum is a number that isn't zero
         if (!isNaN(d[parameter]) && circleCheck(d[parameter])) {
@@ -207,6 +211,7 @@ function addCircles(map, data, parameter) {
 
             circle.bindPopup(popupMarkup);
             circle.on('mouseover', function (e) {
+                console.log(Math.round(parseFloat(this.data['exports_percent_of_total_scs'])))
                 triggerCircleMouseover(this.data['iso_code']);
                 this.openPopup();
                 $(this._path).addClass('active');
@@ -229,13 +234,6 @@ function addCircles(map, data, parameter) {
 
 
 // Intra-regional trade chart ============================= //
-
-// function redrawTable(data) {
-//     var tableRow = $('#sm-table tr');
-//     for (var i = data.length - 1; i >= 0; i--) {
-//         data[i][]
-//     };
-// }
 
 function initChart() {
     var sidebarWidth = $('#sm-chart').width();
@@ -274,7 +272,7 @@ function redrawChart(data, parameter) {
             }
             return p;
         } else {
-            return '$' + Math.round(t/1000000000);
+            return '$' + numberWithCommas(Math.round(t/1000000000));
         }
     }
 
@@ -449,6 +447,11 @@ if (!Math.round10) {
     Math.round10 = function(value, exp) {
         return decimalAdjust('round', value, exp);
     };
+}
+
+// Display number with commas
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 
